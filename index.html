@@ -55,6 +55,7 @@
     filter: drop-shadow(0 0 12px rgba(255,45,149,0.4));
   }
   @keyframes titleShine { to { background-position:300% 0; } }
+  .game-title.long { font-size: clamp(1.5rem, 6.2vw, 3.6rem); }
   .game-subtitle {
     color:#b0b0e0; font-size:clamp(0.85rem,2.5vw,1.1rem);
     max-width:700px; line-height:1.4; margin:14px 0 26px;
@@ -260,7 +261,7 @@
     white-space:nowrap;
   }
   #gameCanvas {
-    display:block; width:100%; height:100%;
+    display:block; width:100%; flex:none;
     touch-action:none;
   }
   .pause-btn {
@@ -276,7 +277,7 @@
     background:rgba(5,5,24,0.92);
     display:none; flex-direction:column;
     align-items:center; justify-content:center; gap:20px;
-    backdrop-filter:blur(8px));
+    backdrop-filter:blur(8px);
   }
   .pause-overlay.active { display:flex; }
   .pause-title {
@@ -392,11 +393,112 @@
   @keyframes textGlow2 { 0%,100%{text-shadow:0 0 20px #00f0ff, 0 0 40px rgba(0,240,255,0.5);} 50%{text-shadow:0 0 30px #00f0ff, 0 0 60px rgba(0,240,255,0.8), 0 0 80px rgba(255,216,77,0.4);} }
   .credits-locked { color:#888; font-style:italic; margin-top:20px; }
 
+  /* ==================== ACHIEVEMENTS ==================== */
+  #achievementsScreen { justify-content:flex-start; padding-top:76px; }
+  .achv-counter { color:#ffd84d; font-weight:bold; letter-spacing:1px; margin:-8px 0 14px; text-align:center; text-shadow:0 0 10px rgba(255,216,77,0.5); }
+  .achv-list {
+    width:100%; max-width:700px; display:flex; flex-direction:column; gap:10px;
+    overflow-y:auto; touch-action:pan-y; padding:8px 6px;
+    max-height:60vh; max-height:calc(100dvh - 190px);
+  }
+  .achv-card {
+    display:flex; align-items:center; gap:14px; padding:12px 14px;
+    background:rgba(15,15,50,0.7); border:2px solid rgba(255,255,255,0.1);
+    border-radius:10px;
+  }
+  .achv-card.unlocked { border-color:var(--char-color); box-shadow:0 0 14px var(--char-color); }
+  .achv-card.locked { opacity:0.55; }
+  .achv-card.locked .achv-avatar { filter:grayscale(1); }
+  .achv-avatar {
+    flex:none; width:56px; height:56px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:2rem; border:2px solid rgba(255,255,255,0.3);
+  }
+  .achv-body { min-width:0; flex:1; text-align:left; }
+  .achv-name { color:#fff; font-weight:bold; font-size:0.95rem; margin-bottom:4px; }
+  .achv-role { margin-left:8px; color:#aaa; font-size:0.7rem; letter-spacing:1px; font-weight:normal; }
+  .achv-msg { font-size:0.85rem; line-height:1.45; color:#e0e0ff; word-wrap:break-word; }
+  .achv-card.locked .achv-msg { color:#888; font-style:italic; }
+  .history-item .result.draw { color:#ffd84d; }
+
+  /* ==================== TEMA FINALE: SFONDI ==================== */
+  body.bio {
+    --bio-base: linear-gradient(180deg, #2b0a24 0%, #3d1032 55%, #220a1c 100%);
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(255,105,180,0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(155,229,100,0.12) 0%, transparent 50%),
+      var(--bio-base);
+  }
+  /* titolo: la cellula uovo che brilla al centro */
+  body.bio[data-screen="titleScreen"] {
+    background:
+      radial-gradient(circle at 50% 34%, rgba(255,235,243,0.34) 0%, rgba(255,194,221,0.16) 18%, transparent 42%),
+      radial-gradient(ellipse at 15% 85%, rgba(155,229,100,0.14) 0%, transparent 45%),
+      var(--bio-base);
+  }
+  /* opzioni: laboratorio, toni acqua */
+  body.bio[data-screen="optionsScreen"] {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(45,212,191,0.24) 0%, transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(168,85,247,0.2) 0%, transparent 45%),
+      var(--bio-base);
+  }
+  /* personaggi: cellule verdi e rosa */
+  body.bio[data-screen="characterScreen"] {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(155,229,100,0.24) 0%, transparent 42%),
+      radial-gradient(circle at 10% 85%, rgba(255,105,180,0.22) 0%, transparent 45%),
+      var(--bio-base);
+  }
+  /* classifica: podio dorato */
+  body.bio[data-screen="leaderboardScreen"] {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(255,216,77,0.24) 0%, transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(255,45,149,0.2) 0%, transparent 50%),
+      var(--bio-base);
+  }
+  /* achievements: rosa e azzurro */
+  body.bio[data-screen="achievementsScreen"] {
+    background:
+      radial-gradient(circle at 50% 8%, rgba(244,114,182,0.28) 0%, transparent 50%),
+      radial-gradient(circle at 90% 90%, rgba(56,189,248,0.18) 0%, transparent 45%),
+      var(--bio-base);
+  }
+  /* credits: la cellula uovo, grande e calda */
+  body.bio[data-screen="creditsScreen"] {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255,235,243,0.3) 0%, rgba(255,216,77,0.14) 26%, transparent 55%),
+      var(--bio-base);
+  }
+  /* fine partita */
+  body.bio[data-screen="endScreen"] {
+    background:
+      radial-gradient(circle at 50% 28%, rgba(255,194,221,0.28) 0%, transparent 48%),
+      radial-gradient(circle at 50% 100%, rgba(155,229,100,0.14) 0%, transparent 45%),
+      var(--bio-base);
+  }
+  /* menu sviluppatore */
+  body.bio[data-screen="devMenuScreen"] {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(16,185,129,0.26) 0%, transparent 50%),
+      var(--bio-base);
+  }
+  /* pannelli in tinta con lo sfondo */
+  body.bio .hud { background: rgba(43,10,36,0.88); border-bottom-color: rgba(255,194,221,0.35); }
+  body.bio .pause-overlay { background: rgba(43,10,36,0.92); }
+  body.bio #optionsScreen .options-container,
+  body.bio #devMenuScreen .options-container { background: rgba(52,14,44,0.6); }
+  body.bio .char-card, body.bio .achv-card { background: rgba(60,16,50,0.7); }
+  body.bio .history-list { background: rgba(52,14,44,0.6); border-color: rgba(255,194,221,0.25); }
+  body.bio .end-vignette { background: rgba(52,14,44,0.85); }
+  body.bio #creditsScreen .credits-content { background: rgba(52,14,44,0.7); }
+
   /* ==================== TOAST ==================== */
   #toast {
     position:fixed; top:30px; left:50%; transform:translateX(-50%) translateY(-100px);
     background:rgba(10,10,40,0.95); border:2px solid #ffd84d; color:#ffd84d;
     padding:12px 24px; border-radius:8px; z-index:1000;
+    width:max-content; max-width:90vw; text-align:center;
     transition:transform 0.4s; font-weight:bold; box-shadow:0 0 20px rgba(255,216,77,0.5);
   }
   #toast.show { transform:translateX(-50%) translateY(0); }
@@ -466,17 +568,18 @@
   }
 </style>
 </head>
-<body>
+<body data-screen="titleScreen">
 
 <canvas id="starfield"></canvas>
 
 <!-- ============ TITLE SCREEN ============ -->
 <div id="titleScreen" class="screen active">
   <div class="present">Alessia, Marco &amp; Alessandro presentano</div>
-  <h1 class="game-title">IN MISSIONE<br>X ALESSANDRO</h1>
+  <h1 class="game-title" id="gameTitle">IN MISSIONE<br>X ALESSANDRO</h1>
   <div class="menu-buttons">
-    <button class="btn" onclick="showScreen('characterScreen')">🚀 Nuova Avventura</button>
+    <button class="btn" id="newGameBtn" onclick="showScreen('characterScreen')">🚀 Nuova Avventura</button>
     <button class="btn pink" onclick="showScreen('leaderboardScreen')">🏆 Classifica</button>
+    <button class="btn" style="border-color:#f59e0b;color:#f59e0b;" onclick="showScreen('achievementsScreen')">🏅 Achievements</button>
     <button class="btn violet" onclick="showScreen('optionsScreen')">⚙️ Opzioni</button>
     <button class="btn" style="border-color:#10b981;color:#10b981;" onclick="openDevMenu()">🛠 Menu Sviluppatore</button>
     <button class="btn gold locked" id="creditsBtn" onclick="openCredits()">⭐ Credits 🔒</button>
@@ -594,6 +697,14 @@
   </div>
 </div>
 
+<!-- ============ ACHIEVEMENTS SCREEN ============ -->
+<div id="achievementsScreen" class="screen">
+  <button class="btn back-btn" onclick="showScreen('titleScreen')">← Indietro</button>
+  <h2 class="screen-title">Achievements</h2>
+  <div class="achv-counter" id="achvCounter"></div>
+  <div class="achv-list" id="achvList"></div>
+</div>
+
 <!-- ============ CREDITS SCREEN ============ -->
 <div id="creditsScreen" class="screen">
   <button class="btn back-btn" onclick="showScreen('titleScreen')">← Indietro</button>
@@ -645,6 +756,12 @@
         <span class="option-value" id="devAsteroidsSpeedValue">1.0x</span>
       </div>
       <input type="range" id="devAsteroidsSpeedSlider" min="0.5" max="3.0" step="0.1" value="1.0">
+    </div>
+    <div class="option-row">
+      <div class="option-label">
+        <span>🧬 Anteprima tema finale</span>
+        <div class="toggle" id="devBioToggle" onclick="toggleDevBio(this)"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -699,7 +816,7 @@ const CHARACTERS = [
   { id:12, name:'Lollo',       role:'Cuginetto',color:'#10b981', avatar:'👦🏻', msg:"Ho vinto! Non so come sono riuscito, ma forse devo ringraziare qualcuno che mi ha guidato, altrimenti non sarei mai stato in grado di scoprire che anche io avrò presto un nuovo cuginetto con cui giocare!!" },
   { id:13, name:'Zio Simone',  role:'Zio',      color:'#0ea5e9', avatar:'🧑🏻‍💻', msg:"I Win! Bello dai, si possono migliorare alcune cosette ma di base mi piace. E poi alla fine c'è anche l'easter egg: Alessia e Marco stanno per diventare genitori per la seconda volta!" },
   { id:14, name:'Zia Angela',  role:'Zia',      color:'#d946ef', avatar:'👩🏻‍💼', msg:"Ho Vinto! Va beh dai, la prossima volta gioco come Noah così leggo la sua frase personalizzata per scoprire che Alessia è incinta di nuovo!" },
-  { id:14, name:'Noah',        role:'Cuginetto',color:'#84cc16', avatar:'🧒🏻', msg:"I Win!!! Sono troppo forte... eeeeeem mamma, quando andiamo a Cetraro a Natale voglio sentire il mio nuovo cuginetto nella pancia di zia Iaia!" },
+  { id:16, name:'Noah',        role:'Cuginetto',color:'#84cc16', avatar:'🧒🏻', msg:"I Win!!! Sono troppo forte... eeeeeem mamma, quando andiamo a Cetraro a Natale voglio sentire il mio nuovo cuginetto nella pancia di zia Iaia!" },
   { id:15, name:'Personalizzato', role:'Tu',     color:'#ffd84d', avatar:'🧑🏼‍🚀', msg:"Ho vinto, un giochino molto semplice ma simpatico....chi sa perché ha voluto che ci giocassi? Aspetta un attimo, non mi dire che..........", custom:true }
 ];
 
@@ -720,10 +837,13 @@ const state = {
     starsSize: 1.0,
     asteroidsCount: 6,
     asteroidsSize: isMobile ? 1.0 : 2.5,
-    asteroidsSpeed: isMobile ? 1.0 : 3.0
+    asteroidsSpeed: isMobile ? 1.0 : 3.0,
+    forceBio: false
   },
   selectedChar: null,
+  bio: false,
   hasWonOnce: false,
+  achievements: {},
   history: [],
   // game runtime
   running: false,
@@ -752,6 +872,8 @@ function loadState(){
     if(h) state.history = JSON.parse(h);
     const w = localStorage.getItem('ima_won');
     state.hasWonOnce = w === '1';
+    const ac = localStorage.getItem('ima_achievements');
+    if(ac){ const o = JSON.parse(ac); if(o && typeof o === 'object' && !Array.isArray(o)) state.achievements = o; }
   } catch(e){ console.warn('Load error',e); }
 }
 function saveSettings(){
@@ -762,6 +884,12 @@ function saveHistory(){
 }
 function saveWon(){
   try { localStorage.setItem('ima_won', state.hasWonOnce ? '1':'0'); } catch(e){}
+}
+function saveAchievements(){
+  try { localStorage.setItem('ima_achievements', JSON.stringify(state.achievements)); } catch(e){}
+}
+function escapeHtml(v){
+  return String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
 
 /* ============ AUDIO ============ */
@@ -912,7 +1040,10 @@ function startBgm(){
     }
 
     // === ARPEGGIO ===
-    const an = arpNotes[i];
+    // l'arpeggio segue gli accordi del basso (8 passi ciascuno); a giri alterni usa la variante
+    const chord = Math.floor(i / 8);
+    const variant = Math.floor(step / bassNotes.length) % 2;
+    const an = arpNotes[(chord * 2 + variant) * 8 + (i % 8)];
     arp.frequency.setValueAtTime(an, now);
     arpGain.gain.cancelScheduledValues(now);
     // Accento sui beat principali
@@ -924,7 +1055,7 @@ function startBgm(){
     if(i % 8 === 0 || i % 8 === 4){
       const kickOsc = ctx.createOscillator();
       const kickG = ctx.createGain();
-      kickOsc.connect(kickG); kickGain.connect(master);
+      kickOsc.connect(kickG); kickG.connect(master);
       kickOsc.frequency.setValueAtTime(150, now);
       kickOsc.frequency.exponentialRampToValueAtTime(30, now + 0.12);
       kickG.gain.setValueAtTime(0.4, now);
@@ -959,11 +1090,9 @@ function startBgm(){
 }
 function stopBgm(){
   if(!bgmNodes) return;
-  try {
-    clearInterval(bgmNodes.interval);
-    bgmNodes.bass.stop(); bgmNodes.arp.stop(); bgmNodes.lfo.stop();
-    bgmNodes.master.disconnect();
-  } catch(e){}
+  try { clearInterval(bgmNodes.interval); } catch(e){}
+  [bgmNodes.bass, bgmNodes.arp, bgmNodes.pad].forEach(o=>{ try { o.stop(); } catch(e){} });
+  try { bgmNodes.master.disconnect(); } catch(e){}
   bgmNodes = null;
 }
 
@@ -988,8 +1117,73 @@ function initStarfield(){
       hue: Math.random()<0.3 ? (Math.random()<0.5?180:300) : 0
     });
   }
+  initBioBits();
 }
+const gameScreenEl = document.getElementById('gameScreen');
+let bioBits = [];
+function initBioBits(){
+  bioBits = [];
+  const w = starfieldCanvas.width, h = starfieldCanvas.height;
+  const count = Math.max(14, Math.min(40, Math.floor((w * h) / 22000)));
+  for(let i = 0; i < count; i++){
+    const swimmer = i % 4 === 0;
+    bioBits.push({
+      swimmer,
+      x: Math.random() * w, y: Math.random() * h,
+      r: swimmer ? 5 + Math.random() * 3 : 8 + Math.random() * 26,
+      vx: swimmer ? (Math.random() < 0.5 ? -1 : 1) * (0.3 + Math.random() * 0.5) : (Math.random() - 0.5) * 0.25,
+      vy: swimmer ? (Math.random() - 0.5) * 0.2 : -(0.08 + Math.random() * 0.25),
+      ph: Math.random() * Math.PI * 2,
+      tint: Math.random() < 0.6 ? 0 : 1
+    });
+  }
+}
+function drawBioStarfield(){
+  const w = starfieldCanvas.width, h = starfieldCanvas.height;
+  sfCtx.clearRect(0, 0, w, h); // lo sfondo colorato di ogni schermata e' nel CSS
+  const t = performance.now() / 1000;
+  for(const b of bioBits){
+    b.x += b.vx; b.y += b.vy;
+    const m = b.r * 3 + 20;
+    if(b.x < -m) b.x = w + m;
+    if(b.x > w + m) b.x = -m;
+    if(b.y < -m) b.y = h + m;
+    if(b.y > h + m) b.y = -m;
+    if(b.swimmer){
+      // spermatozoi in miniatura che nuotano
+      sfCtx.save();
+      sfCtx.translate(b.x, b.y);
+      sfCtx.rotate(Math.atan2(b.vy, b.vx));
+      sfCtx.lineCap = 'round';
+      sfCtx.strokeStyle = 'rgba(214,241,255,0.35)';
+      sfCtx.lineWidth = 2;
+      sfCtx.beginPath();
+      for(let k = 0; k <= 8; k++){
+        const x = -b.r * 0.9 - (k / 8) * b.r * 5;
+        const y = Math.sin(t * 8 + b.ph - k * 0.8) * b.r * 0.6 * (0.2 + k / 8);
+        if(k === 0) sfCtx.moveTo(x, y); else sfCtx.lineTo(x, y);
+      }
+      sfCtx.stroke();
+      sfCtx.fillStyle = 'rgba(214,241,255,0.35)';
+      sfCtx.beginPath(); sfCtx.ellipse(0, 0, b.r * 1.1, b.r * 0.75, 0, 0, Math.PI * 2); sfCtx.fill();
+      sfCtx.restore();
+    } else {
+      // cellule trasparenti che salgono piano
+      const rr = b.r * (1 + Math.sin(t * 1.5 + b.ph) * 0.04);
+      sfCtx.fillStyle = b.tint ? 'rgba(155,229,100,0.10)' : 'rgba(255,194,221,0.12)';
+      sfCtx.strokeStyle = b.tint ? 'rgba(155,229,100,0.28)' : 'rgba(255,194,221,0.30)';
+      sfCtx.lineWidth = 2;
+      sfCtx.beginPath(); sfCtx.arc(b.x, b.y, rr, 0, Math.PI * 2); sfCtx.fill(); sfCtx.stroke();
+      sfCtx.fillStyle = b.tint ? 'rgba(155,229,100,0.18)' : 'rgba(255,194,221,0.2)';
+      sfCtx.beginPath(); sfCtx.arc(b.x + rr * 0.15, b.y + rr * 0.1, rr * 0.35, 0, Math.PI * 2); sfCtx.fill();
+    }
+  }
+}
+
 function drawStarfield(){
+  // durante la partita lo sfondo e' coperto dal canvas di gioco: non sprecare risorse
+  if(gameScreenEl.classList.contains('active')){ requestAnimationFrame(drawStarfield); return; }
+  if(state.bio){ drawBioStarfield(); requestAnimationFrame(drawStarfield); return; }
   sfCtx.fillStyle = 'rgba(5,5,24,0.4)';
   sfCtx.fillRect(0,0,starfieldCanvas.width,starfieldCanvas.height);
   for(const s of sfStars){
@@ -1020,7 +1214,9 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const sc = document.getElementById(id);
   if(sc) sc.classList.add('active');
+  document.body.dataset.screen = id;
   if(id === 'leaderboardScreen') renderLeaderboard();
+  if(id === 'achievementsScreen') renderAchievements();
   if(id === 'titleScreen') updateCreditsBtn();
   if(id !== 'gameScreen' && state.running){
     stopGame();
@@ -1049,7 +1245,7 @@ function toggleOption(key, el){
   el.classList.toggle('on', state.settings[key]);
   saveSettings();
   if(key==='bgm'){
-    if(state.settings.bgm) startBgm(); else stopBgm();
+    if(state.settings.bgm){ if(state.running) startBgm(); } else stopBgm();
   }
   playSfx('click');
 }
@@ -1091,10 +1287,19 @@ function renderCharacters(){
 const gameCanvas = document.getElementById('gameCanvas');
 const gctx = gameCanvas.getContext('2d');
 
+let gameW = 300, gameH = 300; // dimensioni logiche (px CSS) dell'area di gioco
 function resizeGameCanvas(){
   const sc = document.getElementById('gameScreen');
-  gameCanvas.width = sc.clientWidth;
-  gameCanvas.height = sc.clientHeight;
+  const hud = sc.querySelector('.hud');
+  const w = sc.clientWidth;
+  const h = Math.max(100, sc.clientHeight - (hud ? hud.offsetHeight : 0));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  gameW = w; gameH = h;
+  gameCanvas.style.width = w + 'px';
+  gameCanvas.style.height = h + 'px';
+  gameCanvas.width = Math.round(w * dpr);
+  gameCanvas.height = Math.round(h * dpr);
+  gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 function createRocket(x, y, color, isPlayer){
@@ -1116,14 +1321,19 @@ function spawnStar(){
   const r = minSize + Math.random()*(maxSize-minSize);
   const points = Math.max(1, Math.round((r-minSize)/(maxSize-minSize) * 9) + 1);
   return {
-    x: 40 + Math.random()*(gameCanvas.width-80),
-    y: 40 + Math.random()*(gameCanvas.height-80),
+    x: 40 + Math.random()*(gameW-80),
+    y: 40 + Math.random()*(gameH-80),
     r,
     points,
     pulse: Math.random()*Math.PI*2,
     collected: false,
     spawnT: 0
   };
+}
+
+function respawnStarLater(){
+  const gid = state.gameId;
+  setTimeout(()=>{ if(state.running && gid === state.gameId) state.stars.push(spawnStar()); }, 600);
 }
 
 function spawnAsteroid(){
@@ -1133,7 +1343,7 @@ function spawnAsteroid(){
   const r = minSize + Math.random()*(maxSize-minSize);
   const penalty = Math.max(1, Math.round((r-minSize)/(maxSize-minSize) * 9) + 1);
   return {
-    x: Math.random()*gameCanvas.width,
+    x: Math.random()*gameW,
     y: -r,
     vx: (Math.random()-0.5)*1.5 * speedMult,
     vy: (1 + Math.random()*2 + r*0.02) * speedMult,
@@ -1147,6 +1357,9 @@ function spawnAsteroid(){
 
 function startGame(){
   if(!state.selectedChar) return;
+  stopGame(); // pulisce eventuali timer di una partita precedente
+  state.gameId = (state.gameId || 0) + 1;
+  pointer.active = false;
   ensureAudio();
   showScreen('gameScreen');
   resizeGameCanvas();
@@ -1159,8 +1372,8 @@ function startGame(){
   };
   const diff = diffMap[state.settings.difficulty];
 
-  state.player = createRocket(gameCanvas.width/2 - 50, gameCanvas.height/2, state.selectedChar.color, true);
-  state.npc = createRocket(gameCanvas.width/2 + 50, gameCanvas.height/2, '#ff2d95', false);
+  state.player = createRocket(gameW/2 - 50, gameH/2, TRAIL_PLAYER, true);
+  state.npc = createRocket(gameW/2 + 50, gameH/2, '#ff2d95', false);
   state.npc.maxSpeed = diff.speed;
   state.npc.greedy = diff.greedy;
   state.npc.predict = diff.predict;
@@ -1178,7 +1391,7 @@ function startGame(){
   for(let i=0;i<state.devSettings.starsCount;i++) state.stars.push(spawnStar());
   for(let i=0;i<state.devSettings.asteroidsCount;i++){
     const a = spawnAsteroid();
-    a.y = Math.random()*gameCanvas.height;
+    a.y = Math.random()*gameH;
     state.asteroids.push(a);
   }
 
@@ -1186,7 +1399,7 @@ function startGame(){
   document.getElementById('npcScore').textContent = '0';
   document.getElementById('timerValue').textContent = state.timeLeft;
   document.getElementById('playerHudName').textContent = state.selectedChar.name;
-  document.getElementById('playerHudAvatar').textContent = '🧑‍🚀';
+  document.getElementById('playerHudAvatar').textContent = (state.bio ? '🏊' : '🧑‍🚀');
 
   if(state.settings.bgm) startBgm();
 
@@ -1194,20 +1407,21 @@ function startGame(){
   state.countdown = true; // durante il conto alla rovescia i punti non vengono conteggiati
 
   // Dopo 1 secondo mostra il conto alla rovescia 3-2-1
-  setTimeout(()=>{
+  state.cdStart = setTimeout(()=>{
     const overlay = document.getElementById('countdownOverlay');
     const text = document.getElementById('countdownText');
     overlay.style.display = 'flex';
     let count = 3;
     text.textContent = count;
     playSfx('click');
-    const countInterval = setInterval(()=>{
+    state.cdInterval = setInterval(()=>{
+      if(state.paused) return;
       count--;
       if(count > 0){
         text.textContent = count;
         playSfx('click');
       } else {
-        clearInterval(countInterval);
+        clearInterval(state.cdInterval);
         overlay.style.display = 'none';
         state.countdown = false; // finito il conto alla rovescia, i punti ora vengono conteggiati
         // Avvia il timer del round solo dopo il conto alla rovescia
@@ -1225,6 +1439,11 @@ function startGame(){
 
 function stopGame(){
   state.running = false;
+  clearTimeout(state.cdStart);
+  clearInterval(state.cdInterval);
+  const cdOv = document.getElementById('countdownOverlay');
+  if(cdOv) cdOv.style.display = 'none';
+  state.countdown = false;
   if(state.rafId){ cancelAnimationFrame(state.rafId); state.rafId = null; }
   if(state.gameTimer){ clearInterval(state.gameTimer); state.gameTimer = null; }
   stopBgm();
@@ -1319,12 +1538,12 @@ function update(dt){
   p.vy = Math.sin(p.angle) * p.speed;
   p.x += p.vx * dt;
   p.y += p.vy * dt;
-  p.x = Math.max(p.radius, Math.min(gameCanvas.width - p.radius, p.x));
-  p.y = Math.max(p.radius, Math.min(gameCanvas.height - p.radius, p.y));
+  p.x = Math.max(p.radius, Math.min(gameW - p.radius, p.x));
+  p.y = Math.max(p.radius, Math.min(gameH - p.radius, p.y));
 
   // trail
-  if(p.speed > 0.5){
-    p.trail.push({ x:p.x - Math.cos(p.angle)*12, y:p.y - Math.sin(p.angle)*12, life:1, color:p.color });
+  if(p.speed > 0.5 && !state.bio){
+    p.trail.push({ x:p.x - Math.cos(p.angle)*12, y:p.y - Math.sin(p.angle)*12, life:1, color:TRAIL_PLAYER });
   }
   if(p.trail.length > 25) p.trail.shift();
   p.trail.forEach(t=> t.life -= 0.04*dt);
@@ -1339,24 +1558,24 @@ function update(dt){
     if(d < bestDist){ bestDist = d; bestStar = s; }
   }
   if(bestStar){
-    // predizione: mira dove la stella sarà (con piccola randomicità)
-    const predict = n.predict || 0;
-    const targetX = bestStar.x;
-    const targetY = bestStar.y;
-    const dx = targetX - n.x;
-    const dy = targetY - n.y;
+    const dx = bestStar.x - n.x;
+    const dy = bestStar.y - n.y;
     const targetAngle = Math.atan2(dy, dx);
     let aDiff = targetAngle - n.angle;
     while(aDiff > Math.PI) aDiff -= Math.PI*2;
     while(aDiff < -Math.PI) aDiff += Math.PI*2;
     n.angle += aDiff * 0.1 * dt * (1 + n.greedy);
     n.speed = n.maxSpeed * (n.greedy * 0.7 + 0.3);
-    // evita asteroidi vicini
+    // evita gli asteroidi: "predict" decide quanto guarda avanti e quanto sterza
+    const look = (n.predict || 0) * 20;
     for(const a of state.asteroids){
-      const adx = n.x - a.x, ady = n.y - a.y;
-      const ad = Math.hypot(adx,ady);
-      if(ad < 80 && ad > 0.1){
-        n.angle += Math.atan2(ady, adx) * 0.05 * dt;
+      const adx = n.x - (a.x + a.vx * look), ady = n.y - (a.y + a.vy * look);
+      const ad = Math.hypot(adx, ady);
+      if(ad < a.r + 70 && ad > 0.1){
+        let away = Math.atan2(ady, adx) - n.angle;
+        while(away > Math.PI) away -= Math.PI*2;
+        while(away < -Math.PI) away += Math.PI*2;
+        n.angle += away * 0.12 * (n.predict || 0.5) * dt;
       }
     }
   } else {
@@ -1366,10 +1585,10 @@ function update(dt){
   n.vy = Math.sin(n.angle) * n.speed;
   n.x += n.vx * dt;
   n.y += n.vy * dt;
-  n.x = Math.max(n.radius, Math.min(gameCanvas.width - n.radius, n.x));
-  n.y = Math.max(n.radius, Math.min(gameCanvas.height - n.radius, n.y));
-  if(n.speed > 0.5){
-    n.trail.push({ x:n.x - Math.cos(n.angle)*12, y:n.y - Math.sin(n.angle)*12, life:1, color:n.color });
+  n.x = Math.max(n.radius, Math.min(gameW - n.radius, n.x));
+  n.y = Math.max(n.radius, Math.min(gameH - n.radius, n.y));
+  if(n.speed > 0.5 && !state.bio){
+    n.trail.push({ x:n.x - Math.cos(n.angle)*12, y:n.y - Math.sin(n.angle)*12, life:1, color:TRAIL_NPC });
   }
   if(n.trail.length > 25) n.trail.shift();
   n.trail.forEach(t=> t.life -= 0.04*dt);
@@ -1388,9 +1607,10 @@ function update(dt){
         document.getElementById('playerScore').textContent = state.playerScore;
       }
       playSfx('star');
-      spawnParticles(s.x, s.y, '#FFD700', 12);
+      spawnParticles(s.x, s.y, state.bio ? '#9be564' : '#FFD700', 12);
       // respawn
-      setTimeout(()=>{ if(state.running){ state.stars.push(spawnStar()); } }, 600);
+      respawnStarLater();
+      continue; // la stella e' gia' presa: l'NPC non puo' prenderla nello stesso frame
     }
     // collisione npc
     const dn = Math.hypot(s.x - n.x, s.y - n.y);
@@ -1400,8 +1620,8 @@ function update(dt){
         state.npcScore += s.points;
         document.getElementById('npcScore').textContent = state.npcScore;
       }
-      spawnParticles(s.x, s.y, '#FFD700', 12);
-      setTimeout(()=>{ if(state.running){ state.stars.push(spawnStar()); } }, 600);
+      spawnParticles(s.x, s.y, state.bio ? '#9be564' : '#FFD700', 12);
+      respawnStarLater();
     }
   }
   state.stars = state.stars.filter(s=> !s.collected);
@@ -1411,10 +1631,10 @@ function update(dt){
     a.x += a.vx * dt;
     a.y += a.vy * dt;
     a.angle += a.da * dt;
-    if(a.x < -a.r) a.x = gameCanvas.width + a.r;
-    if(a.x > gameCanvas.width + a.r) a.x = -a.r;
-    if(a.y > gameCanvas.height + a.r){
-      a.x = Math.random()*gameCanvas.width;
+    if(a.x < -a.r) a.x = gameW + a.r;
+    if(a.x > gameW + a.r) a.x = -a.r;
+    if(a.y > gameH + a.r){
+      a.x = Math.random()*gameW;
       a.y = -a.r;
     }
     // collisione player
@@ -1425,12 +1645,13 @@ function update(dt){
         document.getElementById('playerScore').textContent = state.playerScore;
       }
       playSfx('asteroid');
-      spawnParticles(p.x, p.y, '#ff2d95', 18);
+      spawnParticles(p.x, p.y, state.bio ? '#e11d48' : '#ff2d95', 18);
+      // knockback: via dall'asteroide (calcolato prima del respawn)
+      const kbP = Math.atan2(p.y-a.y, p.x-a.x);
+      p.x += Math.cos(kbP)*15;
+      p.y += Math.sin(kbP)*15;
       // respawna asteroide in alto
-      a.x = Math.random()*gameCanvas.width; a.y = -a.r;
-      // knockback
-      p.x -= Math.cos(Math.atan2(p.y-a.y, p.x-a.x))*15;
-      p.y -= Math.sin(Math.atan2(p.y-a.y, p.x-a.x))*15;
+      a.x = Math.random()*gameW; a.y = -a.r;
     }
     // collisione npc
     const dn = Math.hypot(a.x - n.x, a.y - n.y);
@@ -1439,10 +1660,11 @@ function update(dt){
         state.npcScore = Math.max(0, state.npcScore - a.penalty);
         document.getElementById('npcScore').textContent = state.npcScore;
       }
-      spawnParticles(n.x, n.y, '#ff2d95', 18);
-      a.x = Math.random()*gameCanvas.width; a.y = -a.r;
-      n.x -= Math.cos(Math.atan2(n.y-a.y, n.x-a.x))*15;
-      n.y -= Math.sin(Math.atan2(n.y-a.y, n.x-a.x))*15;
+      spawnParticles(n.x, n.y, state.bio ? '#e11d48' : '#ff2d95', 18);
+      const kbN = Math.atan2(n.y-a.y, n.x-a.x);
+      n.x += Math.cos(kbN)*15;
+      n.y += Math.sin(kbN)*15;
+      a.x = Math.random()*gameW; a.y = -a.r;
     }
   }
 
@@ -1474,20 +1696,21 @@ function spawnParticles(x, y, color, count){
 
 /* ============ RENDER ============ */
 function render(){
+  if(state.bio){ drawBioBackground(); } else {
   // sfondo cielo blu notte
-  const bgGrad = gctx.createLinearGradient(0, 0, 0, gameCanvas.height);
+  const bgGrad = gctx.createLinearGradient(0, 0, 0, gameH);
   bgGrad.addColorStop(0, '#0a1628');
   bgGrad.addColorStop(0.5, '#0d1b3e');
   bgGrad.addColorStop(1, '#081225');
   gctx.fillStyle = bgGrad;
-  gctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+  gctx.fillRect(0, 0, gameW, gameH);
 
   // stelle fisse random (cielo stellato)
   gctx.fillStyle = '#ffffff';
   const starCount = 120;
   for(let i = 0; i < starCount; i++){
-    const sx = (Math.sin(i * 127.1 + 311.7) * 0.5 + 0.5) * gameCanvas.width;
-    const sy = (Math.sin(i * 269.5 + 183.3) * 0.5 + 0.5) * gameCanvas.height;
+    const sx = (Math.sin(i * 127.1 + 311.7) * 0.5 + 0.5) * gameW;
+    const sy = (Math.sin(i * 269.5 + 183.3) * 0.5 + 0.5) * gameH;
     const sr = 0.5 + (Math.sin(i * 43.7) * 0.5 + 0.5) * 1.5;
     const alpha = 0.3 + (Math.sin(i * 17.3) * 0.5 + 0.5) * 0.7;
     gctx.globalAlpha = alpha;
@@ -1496,10 +1719,12 @@ function render(){
     gctx.fill();
   }
   gctx.globalAlpha = 1;
+  }
 
   // STARS
   for(const s of state.stars){
     if(s.collected) continue;
+    if(state.bio){ drawCell(s); continue; }
     const pulse = 1 + Math.sin(s.pulse)*0.15;
     // alone luminoso giallo
     const grd = gctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r*2.5*pulse);
@@ -1521,6 +1746,7 @@ function render(){
 
   // ASTEROIDI
   for(const a of state.asteroids){
+    if(state.bio){ drawInkBlot(a); continue; }
     gctx.save();
     gctx.translate(a.x, a.y);
     gctx.rotate(a.angle);
@@ -1621,6 +1847,7 @@ function drawStarShape(cx, cy, outerR, innerR, points, color){
 
 function drawRocket(r){
   if(!r) return;
+  if(state.bio){ drawSperm(r); return; } // niente scia: si vede bene la coda
   // trail
   for(let i=0;i<r.trail.length;i++){
     const t = r.trail[i];
@@ -1656,7 +1883,9 @@ function endGame(){
   document.getElementById('pauseOverlay').classList.remove('active');
 
   const playerWon = state.playerScore > state.npcScore;
-  const winner = playerWon ? state.selectedChar : null;
+  const isDraw = state.playerScore === state.npcScore;
+  let newAchv = false;
+  const wasBio = !!state.bio;
 
   // save history
   const now = new Date();
@@ -1667,7 +1896,7 @@ function endGame(){
     charColor: state.selectedChar.color,
     score: state.playerScore,
     npcScore: state.npcScore,
-    result: playerWon ? 'win' : 'lose'
+    result: playerWon ? 'win' : (isDraw ? 'draw' : 'lose')
   });
   if(state.history.length > 10) state.history = state.history.slice(0,10);
   saveHistory();
@@ -1675,6 +1904,7 @@ function endGame(){
   if(playerWon){
     state.hasWonOnce = true;
     saveWon();
+    newAchv = unlockAchievement(state.selectedChar);
     playSfx('win');
   } else {
     playSfx('lose');
@@ -1691,7 +1921,7 @@ function endGame(){
   if(playerWon){
     avatar.style.background = state.selectedChar.color;
     avatar.style.color = '#fff';
-    avatar.textContent = '🧑‍🚀';
+    avatar.textContent = (state.bio ? '🏊' : '🧑‍🚀');
     avatar.style.boxShadow = `0 0 40px ${state.selectedChar.color}, inset 0 0 20px rgba(0,0,0,0.3)`;
     label.textContent = 'VITTORIA!';
     label.className = 'end-result-label win';
@@ -1701,11 +1931,15 @@ function endGame(){
     avatar.style.color = '#fff';
     avatar.textContent = '👤';
     avatar.style.boxShadow = `0 0 40px #ff2d95, inset 0 0 20px rgba(0,0,0,0.3)`;
-    label.textContent = 'SCONFITTA';
+    label.textContent = isDraw ? 'PAREGGIO' : 'SCONFITTA';
     label.className = 'end-result-label lose';
   }
 
   showScreen('endScreen');
+  if(newAchv){
+    if(state.bio && !wasBio) showToast('🧬 Tutti gli Achievements sbloccati! Nuovo tema: «Alla conquista della cellula uovo»', 5000);
+    else showToast('🏅 Achievement sbloccato: ' + state.selectedChar.name);
+  }
 
   // Avvia il typewriter DOPO aver mostrato la schermata (fix bug)
   if(playerWon){
@@ -1715,7 +1949,7 @@ function endGame(){
     });
   } else {
     // Sconfitta: dopo il messaggio torna direttamente al menu
-    typewrite("Hai perso! Gioca di nuovo per raccogliere più stelle e scoprire il mio messaggio segreto!", msgEl, ()=>{
+    typewrite(isDraw ? ("Pareggio! Ti serve almeno " + (state.bio ? "una cellula" : "una stella") + " in più dell'NPC per scoprire il mio messaggio segreto!") : ("Hai perso! Gioca di nuovo per raccogliere più " + (state.bio ? "cellule" : "stelle") + " e scoprire il mio messaggio segreto!"), msgEl, ()=>{
       setTimeout(()=> exitToMenu(), 1500);
     });
   }
@@ -1765,8 +1999,8 @@ function renderLeaderboard(){
       const div = document.createElement('div');
       div.className = 'podium-place ' + orderClass[idx];
       div.innerHTML = `
-        <div class="podium-rank" style="color:${item.charColor}">${orderRank[idx]}</div>
-        <div class="podium-name">${item.char}</div>
+        <div class="podium-rank" style="color:${escapeHtml(item.charColor)}">${orderRank[idx]}</div>
+        <div class="podium-name">${escapeHtml(item.char)}</div>
         <div class="podium-score">${item.score} pt</div>
       `;
       podium.appendChild(div);
@@ -1780,10 +2014,10 @@ function renderLeaderboard(){
       const div = document.createElement('div');
       div.className = 'history-item';
       div.innerHTML = `
-        <span class="date">${h.date}</span>
-        <span class="char" style="color:${h.charColor}">${h.char}</span>
+        <span class="date">${escapeHtml(h.date)}</span>
+        <span class="char" style="color:${escapeHtml(h.charColor)}">${escapeHtml(h.char)}</span>
         <span class="score">${h.score} pt</span>
-        <span class="result ${h.result}">${h.result==='win'?'VITTORIA':'SCONFITTA'}</span>
+        <span class="result ${escapeHtml(h.result)}">${h.result==='win'?'VITTORIA':(h.result==='draw'?'PAREGGIO':'SCONFITTA')}</span>
       `;
       list.appendChild(div);
     });
@@ -1799,6 +2033,216 @@ function clearHistory(){
   saveHistory();
   renderLeaderboard();
   showToast('Storico pulito');
+}
+
+/* ============ ACHIEVEMENTS ============ */
+function unlockAchievement(c){
+  if(!c) return false;
+  const prev = state.achievements[c.id];
+  state.achievements[c.id] = { name: c.name, date: prev ? prev.date : new Date().toLocaleDateString('it-IT') };
+  saveAchievements();
+  applyTheme();
+  return !prev;
+}
+function renderAchievements(){
+  const list = document.getElementById('achvList');
+  const unlocked = CHARACTERS.filter(c=> state.achievements[c.id]).length;
+  document.getElementById('achvCounter').textContent = '🏅 Sbloccati ' + unlocked + ' / ' + CHARACTERS.length;
+  list.innerHTML = '';
+  CHARACTERS.forEach(c=>{
+    const rec = state.achievements[c.id];
+    const sub = (c.custom && rec) ? 'Giocato come ' + rec.name : c.role;
+    const card = document.createElement('div');
+    card.className = 'achv-card ' + (rec ? 'unlocked' : 'locked');
+    card.style.setProperty('--char-color', c.color);
+    card.innerHTML = `
+      <div class="achv-avatar" style="background:${c.color};">${c.avatar}</div>
+      <div class="achv-body">
+        <div class="achv-name">${escapeHtml(c.name)}<span class="achv-role">${escapeHtml(sub)}</span></div>
+        <div class="achv-msg">${rec ? '“' + escapeHtml(c.msg) + '”' : '🔒 Vinci una partita con questo personaggio per sbloccare la sua frase.'}</div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+/* ============ TEMA FINALE: ALLA CONQUISTA DELLA CELLULA UOVO ============ */
+const TRAIL_PLAYER = '#38bdf8'; // scia del giocatore: sempre azzurra
+const TRAIL_NPC    = '#ff2d95'; // scia dell'NPC: sempre rosa
+
+function bioOn(){
+  return !!state.devSettings.forceBio || CHARACTERS.every(c=> state.achievements[c.id]);
+}
+function applyTheme(){
+  state.bio = bioOn();
+  const bio = state.bio;
+  if(document.body) document.body.classList.toggle('bio', bio);
+  document.title = bio ? 'Alla conquista della cellula uovo' : 'In missione con Alessandro';
+  const t = document.getElementById('gameTitle');
+  if(t){
+    t.innerHTML = bio ? 'ALLA CONQUISTA<br>DELLA CELLULA UOVO' : 'IN MISSIONE<br>X ALESSANDRO';
+    t.classList.toggle('long', bio);
+  }
+  const nb = document.getElementById('newGameBtn');
+  if(nb) nb.textContent = bio ? '🧬 Nuova Avventura' : '🚀 Nuova Avventura';
+  const sb = document.getElementById('startGameBtn');
+  if(sb) sb.textContent = bio ? 'INIZIA LA SFIDA! 🧬' : 'INIZIA LA SFIDA! 🚀';
+}
+
+function drawBioBackground(){
+  const bg = gctx.createLinearGradient(0, 0, 0, gameH);
+  bg.addColorStop(0, '#2b0a24');
+  bg.addColorStop(0.5, '#3d1032');
+  bg.addColorStop(1, '#220a1c');
+  gctx.fillStyle = bg;
+  gctx.fillRect(0, 0, gameW, gameH);
+
+  // la cellula uovo, grande e luminosa sullo sfondo
+  const t = performance.now() / 1000;
+  const cx = gameW * 0.5, cy = gameH * 0.5;
+  const R = Math.min(gameW, gameH) * 0.28 * (1 + Math.sin(t * 1.2) * 0.03);
+  const halo = gctx.createRadialGradient(cx, cy, R * 0.2, cx, cy, R * 1.5);
+  halo.addColorStop(0, 'rgba(255,214,230,0.22)');
+  halo.addColorStop(1, 'rgba(255,214,230,0)');
+  gctx.fillStyle = halo;
+  gctx.beginPath(); gctx.arc(cx, cy, R * 1.5, 0, Math.PI * 2); gctx.fill();
+  gctx.strokeStyle = 'rgba(255,200,225,0.25)';
+  gctx.lineWidth = 3;
+  gctx.beginPath(); gctx.arc(cx, cy, R, 0, Math.PI * 2); gctx.stroke();
+  gctx.fillStyle = 'rgba(255,230,240,0.10)';
+  gctx.beginPath(); gctx.arc(cx, cy, R * 0.38, 0, Math.PI * 2); gctx.fill();
+
+  // bollicine che galleggiano (posizioni fisse)
+  gctx.fillStyle = '#ffc2dd';
+  for(let i = 0; i < 60; i++){
+    const bx = (Math.sin(i * 127.1 + 311.7) * 0.5 + 0.5) * gameW;
+    const by = (Math.sin(i * 269.5 + 183.3) * 0.5 + 0.5) * gameH;
+    const br = 1 + (Math.sin(i * 43.7) * 0.5 + 0.5) * 3;
+    gctx.globalAlpha = 0.1 + (Math.sin(i * 17.3) * 0.5 + 0.5) * 0.25;
+    gctx.beginPath(); gctx.arc(bx, by, br, 0, Math.PI * 2); gctx.fill();
+  }
+  gctx.globalAlpha = 1;
+}
+
+function drawCell(s){
+  const r = s.r * (1 + Math.sin(s.pulse) * 0.08);
+  const halo = gctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, r * 2.2);
+  halo.addColorStop(0, 'rgba(155,229,100,0.35)');
+  halo.addColorStop(1, 'rgba(155,229,100,0)');
+  gctx.fillStyle = halo;
+  gctx.beginPath(); gctx.arc(s.x, s.y, r * 2.2, 0, Math.PI * 2); gctx.fill();
+
+  // membrana ondulata
+  gctx.fillStyle = '#b6f08a';
+  gctx.strokeStyle = '#000';
+  gctx.lineWidth = 3;
+  gctx.lineJoin = 'round';
+  gctx.beginPath();
+  const N = 20;
+  for(let i = 0; i <= N; i++){
+    const a = (i / N) * Math.PI * 2;
+    const rr = r * (1 + Math.sin(a * 3 + s.pulse * 1.5) * 0.06);
+    const x = s.x + Math.cos(a) * rr, y = s.y + Math.sin(a) * rr;
+    if(i === 0) gctx.moveTo(x, y); else gctx.lineTo(x, y);
+  }
+  gctx.closePath(); gctx.fill(); gctx.stroke();
+
+  // nucleo e riflesso
+  const nx = s.x + r * 0.12, ny = s.y + r * 0.1;
+  gctx.fillStyle = '#4fae2c';
+  gctx.lineWidth = 2;
+  gctx.beginPath(); gctx.arc(nx, ny, r * 0.42, 0, Math.PI * 2); gctx.fill(); gctx.stroke();
+  gctx.fillStyle = 'rgba(255,255,255,0.7)';
+  gctx.beginPath(); gctx.arc(s.x - r * 0.35, s.y - r * 0.38, r * 0.14, 0, Math.PI * 2); gctx.fill();
+
+  // punti
+  gctx.font = 'bold 10px monospace';
+  gctx.textAlign = 'center';
+  gctx.textBaseline = 'middle';
+  gctx.lineWidth = 3;
+  gctx.strokeStyle = '#000';
+  gctx.strokeText('+' + s.points, nx, ny);
+  gctx.fillStyle = '#fff';
+  gctx.fillText('+' + s.points, nx, ny);
+}
+
+function drawInkBlot(a){
+  gctx.save();
+  gctx.translate(a.x, a.y);
+  gctx.rotate(a.angle);
+  gctx.fillStyle = '#c1121f';
+  gctx.strokeStyle = '#000';
+  gctx.lineWidth = 3;
+  gctx.lineJoin = 'round';
+
+  // macchia irregolare: curva liscia passante per i punti medi
+  const n = 10, pts = [];
+  for(let i = 0; i < n; i++){
+    const ang = (i / n) * Math.PI * 2;
+    const rad = a.r * (0.75 + 0.3 * Math.abs(Math.sin(i * 2.1 + a.sides)));
+    pts.push({ x: Math.cos(ang) * rad, y: Math.sin(ang) * rad });
+  }
+  const mid = (p, q)=> ({ x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 });
+  const m0 = mid(pts[n - 1], pts[0]);
+  gctx.beginPath();
+  gctx.moveTo(m0.x, m0.y);
+  for(let i = 0; i < n; i++){
+    const p = pts[i], q = pts[(i + 1) % n], m = mid(p, q);
+    gctx.quadraticCurveTo(p.x, p.y, m.x, m.y);
+  }
+  gctx.closePath(); gctx.fill(); gctx.stroke();
+
+  // goccioline schizzate intorno
+  gctx.lineWidth = 2;
+  [[1.25, 0.5, 0.18], [-1.1, 0.9, 0.14], [0.2, -1.3, 0.16]].forEach(d=>{
+    gctx.beginPath(); gctx.arc(a.r * d[0], a.r * d[1], a.r * d[2], 0, Math.PI * 2); gctx.fill(); gctx.stroke();
+  });
+
+  // riflesso lucido
+  gctx.fillStyle = 'rgba(255,140,150,0.65)';
+  gctx.beginPath(); gctx.ellipse(-a.r * 0.25, -a.r * 0.3, a.r * 0.22, a.r * 0.12, -0.6, 0, Math.PI * 2); gctx.fill();
+  gctx.restore();
+}
+
+function drawSperm(r){
+  const t = performance.now() / 1000;
+  const amp = 3 + r.speed * 0.9;
+  const headCol = r.isPlayer ? '#d6f1ff' : '#ffd1e6';
+  const tailCol = r.isPlayer ? TRAIL_PLAYER : TRAIL_NPC;
+  gctx.save();
+  gctx.translate(r.x, r.y);
+  gctx.rotate(r.angle);
+  gctx.lineCap = 'round';
+  gctx.lineJoin = 'round';
+
+  // coda che ondeggia (piu' veloce = onde piu' ampie)
+  const N = 12, L = 34, startX = -9;
+  gctx.beginPath();
+  for(let k = 0; k <= N; k++){
+    const x = startX - (k / N) * L;
+    const y = Math.sin(t * 14 - k * 0.7) * amp * (0.25 + k / N);
+    if(k === 0) gctx.moveTo(x, y); else gctx.lineTo(x, y);
+  }
+  gctx.strokeStyle = '#000'; gctx.lineWidth = 7; gctx.stroke();
+  gctx.strokeStyle = tailCol; gctx.lineWidth = 3.5; gctx.stroke();
+
+  // testa
+  gctx.fillStyle = headCol;
+  gctx.strokeStyle = '#000';
+  gctx.lineWidth = 3;
+  gctx.beginPath(); gctx.ellipse(0, 0, 13, 9, 0, 0, Math.PI * 2); gctx.fill(); gctx.stroke();
+  gctx.fillStyle = 'rgba(255,255,255,0.8)';
+  gctx.beginPath(); gctx.ellipse(-3, -4, 4, 1.8, 0, 0, Math.PI * 2); gctx.fill();
+
+  // occhietti simpatici
+  gctx.lineWidth = 1.5;
+  [-3.5, 3.5].forEach(ey=>{
+    gctx.fillStyle = '#fff';
+    gctx.beginPath(); gctx.arc(5, ey, 2.8, 0, Math.PI * 2); gctx.fill(); gctx.stroke();
+    gctx.fillStyle = '#000';
+    gctx.beginPath(); gctx.arc(5.9, ey, 1.3, 0, Math.PI * 2); gctx.fill();
+  });
+  gctx.restore();
 }
 
 /* ============ CREDITS ============ */
@@ -1961,6 +2405,7 @@ function checkDevPassword(){
 }
 function initDevMenu(){
   const ds = state.devSettings;
+  document.getElementById('devBioToggle').classList.toggle('on', !!ds.forceBio);
   const sc = document.getElementById('devStarsCountSlider');
   sc.value = ds.starsCount;
   document.getElementById('devStarsCountValue').textContent = ds.starsCount;
@@ -2017,17 +2462,25 @@ function confirmCustomName(){
   closeCustomNameModal();
 }
 
-function showToast(msg){
+function toggleDevBio(el){
+  state.devSettings.forceBio = !state.devSettings.forceBio;
+  el.classList.toggle('on', state.devSettings.forceBio);
+  applyTheme();
+  playSfx('click');
+}
+
+function showToast(msg, ms){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   if(toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=> t.classList.remove('show'), 2500);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), ms || 2500);
 }
 
 /* ============ INIT ============ */
 function init(){
   loadState();
+  applyTheme();
   initStarfield();
   drawStarfield();
   initOptions();
@@ -2043,7 +2496,7 @@ function init(){
 
   // Previeni scroll su touch
   document.addEventListener('touchmove', (e)=>{
-    if(e.target.closest('#gameCanvas') || e.target.closest('.char-grid') || e.target.closest('.history-list')) return;
+    if(e.target.closest('#gameCanvas') || e.target.closest('.char-grid') || e.target.closest('.history-list') || e.target.closest('.achv-list')) return;
     if(e.target.closest('.screen.active') && e.target.closest('.screen.active').scrollHeight > e.target.closest('.screen.active').clientHeight){
       // allow scroll inside screen if needed
       return;
