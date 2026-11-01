@@ -1133,7 +1133,7 @@ function playTrack(src, fallback){
   const a = new Audio(src);
   a.dataset.src = src;
   a.loop = true;
-  a.volume = 0.45;
+  a.volume = 0.8;
   musicAudio = a;
   const retry = ()=>{ if(musicAudio === a){ musicAudio = null; if(fallback) fallback(); } };
   a.onerror = retry;
@@ -1406,7 +1406,7 @@ function showScreen(id){
   }
   // tema finale: musica dedicata ai menu e alle schermate di fine partita
   if(state.bio && state.settings.bgm && id !== 'gameScreen'){
-    playTrack((id === 'endScreen' || id === 'kevinScreen') ? MUSIC_END : MUSIC_MENU);
+    playTrack(id === 'kevinScreen' ? MUSIC_END : MUSIC_MENU);
   }
   playSfx('click');
 }
