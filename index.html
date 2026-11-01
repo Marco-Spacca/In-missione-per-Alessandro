@@ -2584,53 +2584,75 @@ function startKevinSequence(){
   const wrap = document.getElementById('kevinLetters');
   const nameEl = document.getElementById('kevinName');
   const labelEl = document.getElementById('kevinLabel');
-  const hintEl = document.getElementById('kevinHint');
   const btns = document.getElementById('kevinButtons');
   const flash = document.getElementById('kevinFlash');
   const canvas = document.getElementById('kevinCanvas');
   const ctx = canvas.getContext('2d');
+  const sphere = document.getElementById('kevinSphere');
   // reset
   wrap.innerHTML = ''; wrap.style.display = '';
   nameEl.style.display = 'none';
   labelEl.style.display = 'none';
-  hintEl.style.display = 'none';
   btns.style.display = 'none';
-  document.getElementById('kevinSphere').classList.remove('on');
+  sphere.classList.remove('on');
+  sphere.style.animation = '';
+  sphere.style.transform = 'translate(-50%,-50%) scale(0)';
+  sphere.style.opacity = '0';
   const orb = document.getElementById('kevinOrb');
   orb.style.opacity = '0';
   orb.style.transform = 'translate(-50%,-50%) scale(0)';
-  orb.style.filter = '';
   flash.classList.remove('go');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   kevinTap = { count: 0, last: 0, active: false };
 
-  // 1) cinque punti interrogativi appaiono in posizioni casuali dello schermo
-  'VINEK'.split('').forEach(()=>{
+  // distractor letters: random alphabet (no V,I,N,E,K) scattered around
+  const distractors = 'ABCDEFGHJKLMOPQRSTUWXYZ'.split('');
+  const kevinChars = 'VINEK'.split('');
+  const kevinEls = [];
+  const totalDistractors = 20;
+  for(let i=0;i<totalDistractors;i++){
+    const s = document.createElement('div');
+    s.className = 'kevin-letter';
+    s.textContent = distractors[Math.floor(Math.random()*distractors.length)];
+    s.dataset.kevin = '0';
+    s.style.left = (5 + Math.random()*84) + '%';
+    s.style.top = (14 + Math.random()*68) + '%';
+    wrap.appendChild(s);
+    requestAnimationFrame(()=> s.classList.add('shown'));
+  }
+  // 5 Kevin letters start as '?'
+  kevinChars.forEach((c)=>{
     const s = document.createElement('div');
     s.className = 'kevin-letter';
     s.textContent = '?';
-    s.style.left = (12 + Math.random()*66) + '%';
+    s.dataset.kevin = '1';
+    s.dataset.char = c;
+    s.style.left = (10 + Math.random()*72) + '%';
     s.style.top = (20 + Math.random()*55) + '%';
     wrap.appendChild(s);
+    kevinEls.push(s);
     requestAnimationFrame(()=> s.classList.add('shown'));
   });
 
-  // 2) i punti interrogativi vengono svelati uno alla volta: V, I, N, E, K
-  'VINEK'.split('').forEach((L,i)=>{
+  // reveal Kevin letters one by one: V, I, N, E, K
+  kevinChars.forEach((L,i)=>{
     setTimeout(()=>{
-      wrap.children[i].textContent = L;
+      kevinEls[i].textContent = L;
       playSfx('click');
     }, 900 + i*750);
   });
 
-  // 3) le lettere si riuniscono al centro e nasce la sfera luminosa grande
+  // Kevin letters gather at center; distractors stay scattered; sphere appears
   setTimeout(()=>{
-    document.getElementById('kevinSphere').classList.add('on');
+    sphere.style.opacity = '1';
+    sphere.classList.add('on');
+    // remove pulse animation initially, we'll animate manually later
+    sphere.style.animation = 'kevinSphereIn 1s ease forwards';
     const wr = wrap.getBoundingClientRect();
     const cx = wr.left + wr.width/2, cy = wr.top + wr.height/2;
-    [...wrap.children].forEach(s=>{
+    kevinEls.forEach(s=>{
       const r = s.getBoundingClientRect();
       const dx = cx - (r.left + r.width/2);
       const dy = cy - (r.top + r.height/2);
@@ -2639,20 +2661,27 @@ function startKevinSequence(){
     });
   }, 4400);
 
-  // 4) attiva i tocchi: le lettere spariscono e appare la sfera gialla da toccare
+  // fade Kevin letters, then vibrate sphere increasingly and auto-explode
   setTimeout(()=>{
-    kevinTap.active = true;
-    hintEl.style.display = 'block';
-    [...wrap.children].forEach(s=>{
+    kevinEls.forEach(s=>{
       s.style.transition = 'opacity 0.4s';
       s.style.opacity = '0';
     });
-    orb.style.transition = 'opacity 0.4s ease';
-    requestAnimationFrame(()=>{
-      orb.style.opacity = '1';
-      orb.style.transform = 'translate(-50%,-50%) scale(1)';
-    });
-  }, 5400);
+    // vibration ramp
+    let amp = 0;
+    const vibTimer = setInterval(()=>{
+      amp += 0.7;
+      const ox = (Math.random()-0.5)*amp;
+      const oy = (Math.random()-0.5)*amp;
+      const sc = 1 + (amp/14)*0.08;
+      sphere.style.transform = 'translate(calc(-50% + ' + ox + 'px), calc(-50% + ' + oy + 'px)) scale(' + sc + ')';
+      if(amp >= 16){
+        clearInterval(vibTimer);
+        // explode
+        explodeKevin();
+      }
+    }, 60);
+  }, 5600);
 }
 
 function kevinTapHandler(){
