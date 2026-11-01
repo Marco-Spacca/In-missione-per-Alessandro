@@ -40,8 +40,18 @@
   }
 
   /* ==================== TITLE SCREEN ==================== */
-  #titleScreen { text-align:center; gap:8px; }
-  .present { color:#ffd84d; font-size:0.85rem; letter-spacing:3px; margin-bottom:10px; text-shadow:0 0 8px #ffd84d; }
+  #titleScreen { text-align:center; gap:8px; justify-content:flex-start; padding-top:clamp(18px,5vh,48px); }
+  .settings-btn {
+    position:absolute; top:14px; left:14px; width:46px; height:46px;
+    border-radius:50%; font-size:1.25rem; line-height:1;
+    background:rgba(10,10,40,0.6); border:2px solid rgba(168,85,247,0.5);
+    color:#a855f7; cursor:pointer; transition:all .2s; z-index:5;
+  }
+  .settings-btn:hover, .settings-btn:active {
+    background:rgba(168,85,247,0.2); color:#fff;
+    box-shadow:0 0 15px rgba(168,85,247,0.7); transform:rotate(30deg);
+  }
+  .present { color:#ffd84d; font-size:0.85rem; letter-spacing:3px; margin:16px 0 14px; text-shadow:0 0 8px #ffd84d; }
   .game-title {
     font-family: 'Segoe UI', 'Arial Black', sans-serif;
     font-size: clamp(2rem, 7vw, 4.5rem);
@@ -170,9 +180,10 @@
 
   /* ==================== CHARACTER SELECT ==================== */
   #characterScreen .char-grid {
-    display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap:14px; width:100%; max-width:900px;
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap:14px; width:100%; max-width:560px;   /* 3 colonne affiancate e centrate */
     max-height: 60vh; overflow-y:auto; padding:10px;
+    justify-items:stretch;
   }
   .char-card {
     background: rgba(15,15,50,0.7);
@@ -209,6 +220,16 @@
   .char-role {
     font-size:0.75rem; color:#aaa; text-transform:uppercase;
     letter-spacing:1px; position:relative; z-index:1;
+  }
+  /* personaggio non ancora sbloccato (ordine obbligatorio) */
+  .char-card.char-locked { opacity:0.5; filter:grayscale(1); cursor:not-allowed; }
+  .char-card.char-locked:hover, .char-card.char-locked:active { transform:none; }
+  /* descrizione della finalita' nella schermata personaggi (tema finale) */
+  .char-subtitle {
+    display:none; color:#ffd84d; font-style:italic;
+    font-size:clamp(0.9rem,2.5vw,1.15rem); line-height:1.45;
+    max-width:520px; text-align:center; margin:-6px 0 18px;
+    text-shadow:0 0 12px rgba(255,216,77,0.5);
   }
   /* Personaggio 15 - Personalizzato */
   .char-card.custom-char {
@@ -483,6 +504,13 @@
       radial-gradient(circle at 50% 0%, rgba(16,185,129,0.26) 0%, transparent 50%),
       var(--bio-base);
   }
+  /* rivelazione finale del nome: bagliore oro/rosa */
+  body.bio[data-screen="kevinScreen"] {
+    background:
+      radial-gradient(circle at 50% 40%, rgba(255,216,77,0.28) 0%, transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(255,45,149,0.25) 0%, transparent 50%),
+      var(--bio-base);
+  }
   /* pannelli in tinta con lo sfondo */
   body.bio .hud { background: rgba(43,10,36,0.88); border-bottom-color: rgba(255,194,221,0.35); }
   body.bio .pause-overlay { background: rgba(43,10,36,0.92); }
@@ -492,6 +520,106 @@
   body.bio .history-list { background: rgba(52,14,44,0.6); border-color: rgba(255,194,221,0.25); }
   body.bio .end-vignette { background: rgba(52,14,44,0.85); }
   body.bio #creditsScreen .credits-content { background: rgba(52,14,44,0.7); }
+
+  /* ==================== RIVELAZIONE KEVIN ==================== */
+  .kevin-letters {
+    position:absolute; inset:0; z-index:2;
+    pointer-events:none;
+  }
+  .kevin-letter {
+    position:absolute;
+    font-family:'Segoe UI','Arial Black',sans-serif;
+    font-size:clamp(2.6rem,11vw,5.5rem); font-weight:900; color:#ffd84d;
+    text-shadow:0 0 20px #ffd84d, 0 0 45px rgba(255,216,77,0.6);
+  }
+  .kevin-letter {
+    opacity:0; transform:scale(0.2) rotate(-12deg);
+    transition: transform 0.45s cubic-bezier(0.68,-0.5,0.27,1.6), opacity 0.3s;
+  }
+  .kevin-letter.shown { opacity:1; transform:scale(1) rotate(0); }
+  #kevinName {
+    position:relative; z-index:2; display:none;
+    font-family:'Segoe UI','Arial Black',sans-serif;
+    font-size:clamp(3.4rem,15vw,8rem); font-weight:900; letter-spacing:4px; color:#fff;
+    text-shadow:0 0 25px #ff2d95, 0 0 50px #a855f7, 0 0 90px #ffd84d;
+    animation: kevinPop 0.8s cubic-bezier(0.68,-0.4,0.27,1.55) both, kevinGlow 2s 0.8s infinite;
+  }
+  @keyframes kevinPop { 0%{opacity:0; transform:scale(0.3);} 60%{transform:scale(1.15);} 100%{opacity:1; transform:scale(1);} }
+  @keyframes kevinGlow {
+    0%,100%{ text-shadow:0 0 25px #ff2d95, 0 0 50px #a855f7, 0 0 90px #ffd84d; }
+    50%{ text-shadow:0 0 40px #ff2d95, 0 0 80px #00f0ff, 0 0 130px #ffd84d; }
+  }
+  #kevinFlash {
+    position:absolute; inset:0; z-index:5; opacity:0; pointer-events:none;
+    background: radial-gradient(circle at 50% 42%, rgba(255,255,255,0.95) 0%, rgba(255,216,77,0.5) 30%, transparent 65%);
+  }
+  #kevinFlash.go { animation: kevinFlashAnim 1.4s ease-out; }
+  @keyframes kevinFlashAnim { 0%{opacity:0;} 15%{opacity:1;} 100%{opacity:0;} }
+  #kevinLabel {
+    position:relative; z-index:2; display:none;
+    color:#ffd84d; font-size:clamp(1rem,3.5vw,1.6rem);
+    letter-spacing:3px; text-transform:uppercase;
+    text-shadow:0 0 12px rgba(255,216,77,0.7); margin-bottom:8px;
+    animation: kevinFade 0.8s ease both;
+  }
+  @keyframes kevinFade { from{opacity:0; transform:scale(0.9);} }
+  #kevinHint {
+    position:absolute; z-index:2; left:0; right:0;
+    top:calc(50% + 24vmin); /* sotto la sfera: fuori dal cerchio, altrimenti non si vede */
+    color:#9be564; font-size:1.05rem; letter-spacing:1px; font-weight:bold;
+    text-shadow:0 0 10px rgba(155,229,100,0.6);
+    text-align:center; margin:0;
+    animation: blink 0.9s infinite;
+  }
+  #kevinCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+  #kevinSphere {
+    position:absolute; z-index:1; left:50%; top:50%;
+    width:42vmin; height:42vmin; border-radius:50%;
+    transform:translate(-50%,-50%) scale(0);
+    background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,216,77,0.55) 30%, rgba(168,85,247,0.22) 65%, transparent 75%);
+    box-shadow:0 0 80px rgba(255,216,77,0.6), 0 0 160px rgba(255,216,77,0.35);
+    opacity:0; pointer-events:none;
+  }
+  #kevinSphere.on { animation: kevinSphereIn 1s ease forwards, kevinSpherePulse 2s 1s infinite; }
+  @keyframes kevinSphereIn {
+    from{ opacity:0; transform:translate(-50%,-50%) scale(0.05); }
+    to{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  }
+  @keyframes kevinSpherePulse {
+    0%,100%{ transform:translate(-50%,-50%) scale(1); }
+    50%{ transform:translate(-50%,-50%) scale(1.06); }
+  }
+  /* sfera gialla da toccare: sostituisce il mazzo di lettere al centro */
+  #kevinOrb {
+    position:absolute; z-index:2; left:50%; top:50%;
+    width:34vmin; height:34vmin; border-radius:50%;
+    transform:translate(-50%,-50%) scale(0);
+    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #ffe66d 28%, #ffd84d 55%, #f59e0b 100%);
+    border:6px solid #000;
+    box-shadow:0 0 40px rgba(255,216,77,0.8), 0 0 90px rgba(255,216,77,0.5), inset -8px -14px 30px rgba(0,0,0,0.25);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Segoe UI','Arial Black',sans-serif; font-size:11vmin; font-weight:900; color:#b45309;
+    text-shadow:0 3px 0 rgba(255,255,255,0.55);
+    opacity:0; pointer-events:none;
+  }
+  /* Player Misterioso: card unica centrata e grande */
+  #characterScreen .char-grid.solo { display:flex; justify-content:center; }
+  #characterScreen .char-grid.solo .char-card.mystery-solo {
+    width:min(320px, 80vw);
+    display:flex !important; flex-direction:column !important;
+    align-items:center !important; justify-content:center !important;
+    text-align:center; padding:28px 22px !important; gap:12px;
+  }
+  #characterScreen .char-grid.solo .char-avatar {
+    width:110px !important; height:110px !important; font-size:4rem !important; margin:0 !important;
+  }
+  #characterScreen .char-grid.solo .char-name { font-size:1.3rem !important; margin:0 !important; }
+  #kevinButtons { position:absolute; z-index:3; bottom:40px; left:0; right:0; }
+  /* slot lettere nell'HUD durante la partita */
+  .hud-value.kevin-hud { color:#9be564; text-shadow:0 0 10px #9be564; }
+  .kslot { display:inline-block; margin:0 3px; color:rgba(255,255,255,0.25); }
+  .kslot.pop { color:#9be564; text-shadow:0 0 10px #9be564; animation: kslotPop 0.6s ease; }
+  @keyframes kslotPop { 40%{ transform:scale(1.7); } }
 
   /* ==================== TOAST ==================== */
   #toast {
@@ -517,7 +645,7 @@
     .typewriter-text { font-size:0.9rem; }
     /* Character Select Mobile: layout orizzontale con icona a sinistra */
     #characterScreen .char-grid {
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap:6px;
       max-height: 55vh;
     }
@@ -574,15 +702,13 @@
 
 <!-- ============ TITLE SCREEN ============ -->
 <div id="titleScreen" class="screen active">
+  <button class="settings-btn" onclick="showScreen('optionsScreen')" aria-label="Impostazioni">⚙️</button>
   <div class="present">Alessia, Marco &amp; Alessandro presentano</div>
   <h1 class="game-title" id="gameTitle">IN MISSIONE<br>X ALESSANDRO</h1>
   <div class="menu-buttons">
     <button class="btn" id="newGameBtn" onclick="showScreen('characterScreen')">🚀 Nuova Avventura</button>
     <button class="btn pink" onclick="showScreen('leaderboardScreen')">🏆 Classifica</button>
     <button class="btn" style="border-color:#f59e0b;color:#f59e0b;" onclick="showScreen('achievementsScreen')">🏅 Achievements</button>
-    <button class="btn violet" onclick="showScreen('optionsScreen')">⚙️ Opzioni</button>
-    <button class="btn" style="border-color:#10b981;color:#10b981;" onclick="openDevMenu()">🛠 Menu Sviluppatore</button>
-    <button class="btn gold locked" id="creditsBtn" onclick="openCredits()">⭐ Credits 🔒</button>
   </div>
 </div>
 
@@ -623,6 +749,9 @@
     </div>
 
     <!-- Stelle e Asteroidi rimosse da Opzioni: ora gestite nel Menu Sviluppatore -->
+    <div class="option-row">
+      <button class="btn" style="border-color:#10b981;color:#10b981;" onclick="openDevMenu()">🛠 Menu Sviluppatore</button>
+    </div>
   </div>
 </div>
 
@@ -630,6 +759,7 @@
 <div id="characterScreen" class="screen">
   <button class="btn back-btn" onclick="showScreen('titleScreen')">← Indietro</button>
   <h2 class="screen-title">Seleziona Personaggio</h2>
+  <div class="char-subtitle" id="charSubtitle">Raccogli tutte le lettere del mio nome per scoprire come mi chiamo!</div>
   <div class="char-grid" id="charGrid"></div>
   <div class="start-btn-container">
     <button class="btn pink" id="startGameBtn" disabled onclick="startGame()">INIZIA LA SFIDA! 🚀</button>
@@ -644,9 +774,13 @@
       <span class="hud-player-name" id="playerHudName">Giocatore</span>
       <span class="hud-value" id="playerScore">0</span>
     </div>
-    <div class="hud-item">
+    <div class="hud-item" id="timerHudItem">
       <span>Tempo</span>
       <span class="hud-value timer" id="timerValue">40</span>
+    </div>
+    <div class="hud-item" id="letterHud" style="display:none;">
+      <span>Lettere</span>
+      <span class="hud-value kevin-hud" id="letterSlots">? ? ? ? ?</span>
     </div>
     <div class="hud-item">
       <span>NPC</span>
@@ -680,6 +814,21 @@
     <div class="end-buttons" id="endButtons" style="display:none;">
       <button class="btn pink" id="continueBtn" onclick="showFireworks()">CONTINUA</button>
     </div>
+  </div>
+</div>
+
+<!-- ============ KEVIN REVEAL SCREEN ============ -->
+<div id="kevinScreen" class="screen">
+  <canvas id="kevinCanvas"></canvas>
+  <div id="kevinSphere"></div>
+  <div id="kevinOrb">?</div>
+  <div id="kevinFlash"></div>
+  <div class="kevin-letters" id="kevinLetters"></div>
+  <div id="kevinLabel" style="display:none;">Il mio nome è:</div>
+  <div id="kevinName" style="display:none;">KEVIN</div>
+  <div id="kevinHint" style="display:none;">👆 Tocca qui per far esplodere!</div>
+  <div class="end-buttons" id="kevinButtons" style="display:none;">
+    <button class="btn pink" onclick="showScreen('titleScreen')">🏠 Torna al Menu</button>
   </div>
 </div>
 
@@ -759,6 +908,19 @@
     </div>
     <div class="option-row">
       <div class="option-label">
+        <span>📦 Ottieni lettere ogni</span>
+        <span class="option-value" id="devLetterEveryValue">35 pt</span>
+      </div>
+      <input type="range" id="devLetterEverySlider" min="1" max="50" step="1" value="35">
+    </div>
+    <div class="option-row">
+      <div class="option-label">
+        <span>🔑 Ottieni tutte le lettere (1 item)</span>
+        <div class="toggle" id="devAllLettersToggle" onclick="toggleDevAllLetters(this)"></div>
+      </div>
+    </div>
+    <div class="option-row">
+      <div class="option-label">
         <span>🧬 Anteprima tema finale</span>
         <div class="toggle" id="devBioToggle" onclick="toggleDevBio(this)"></div>
       </div>
@@ -802,23 +964,20 @@
    ============================================================ */
 
 /* ============ COSTANTI & PERSONAGGI ============ */
+/* Il roster completo di 15 player (famiglia + Personalizzato) è in "personaggi.json":
+   leggere solo su richiesta, non è caricato dal gioco. Gioco progressivo con ordine
+   obbligatorio: Marco sempre disponibile, Alessia si sblocca vincendo con Marco,
+   Alessandro vincendo con Alessia. Tutti e 3 vinti = tema finale. */
 const CHARACTERS = [
-  { id:1,  name:'Alessia',     role:'Mamma',    color:'#ff6b9d', avatar:'👩🏻‍🎨', msg:"Ho vinto! Una nuova stella sta per nascere e non vedo l'ora di stringerla tra le mie braccia. Papà, tuo fratello Alessandro ed io non stiamo più nella pelle!" },
-  { id:2,  name:'Marco',       role:'Papà',     color:'#4dabff', avatar:'🏋🏻‍♂️', msg:"Ho vinto! Speriamo che il nuovo bimbo che sta per dare alla luce mia moglie non pianga molto! Ma sì, comunque sia, questa volta so a cosa vado incontro! forse..." },
-  { id:4,  name:'Nonna Patty', role:'Nonna',    color:'#ff8c42', avatar:'👩🏻‍🍳', msg:"Ho vinto, non è stato difficile. Però ora che Alessia e Marco avranno un nuovo pargoletto, mi dovrò rimboccare le maniche!" },
-  { id:5,  name:'Nonno Gigi',  role:'Nonno',    color:'#a855f7', avatar:'🧑🏻‍🌾', msg:"Ho vinto! Per fortuna sono in pensione e potrò dedicarmi al nuovo nipotino che presto Marco e Alessia daranno alla luce." },
-  { id:6,  name:'Nonna Lella', role:'Nonna',    color:'#ec4899', avatar:'💁‍♀️', msg:"Ho vinto! Ma aspetta un attimo... ma Alessia è di nuovo incintaaaaa!!! Che emozioneeee, tutti i weekend scenderemo a Cetraro per stare tutti insieme!" },
-  { id:7,  name:'Nonno Franco',role:'Nonno',    color:'#06b6d4', avatar:'🚴🏻', msg:"Ho vinto, ma io con questa tecnologia non ci capisco nulla. Meglio imparare qualche nuova canzone ora che mia figlia Alessia è di nuovo incinta, così potrò dedicarla al mio futuro nipotino!" },
-  { id:8,  name:'Zia Titti',   role:'Zia',      color:'#f59e0b', avatar:'🧖‍♀️', msg:"Ho vinto! Se prima ero una zia sempre presente, adesso devo sdoppiarmi per guardare il mio nuovo nipotino/a ora che Alessia è incinta!" },
-  { id:9,  name:'Zio Luigi',   role:'Zio',      color:'#8b5cf6', avatar:'🚣🏻', msg:"Ho vinto, ma preferisco il joystick... mmm devo comprarne uno nuovo da regalare al mio nuovo nipotino ora che Alessia è di nuovo incinta!" },
-  { id:10, name:'Zio Andrea',  role:'Zio',      color:'#3b82f6', avatar:'👨🏻‍💼', msg:"Ho vinto, però io avrei fatto diversamente il gioco. Bah, poco importa: era solo un modo per dirmi che Marco sta diventando papà per la seconda volta." },
-  { id:11, name:'Zia Lorena', role:'Zia',      color:'#ef4444', avatar:'👩🏻‍⚖️', msg:"Ho vinto! Devo chiedere a Marco come ha fatto questo gioco, è simpatico. Anche se tutto questo era solo un pretesto per dirmi che Alessia è di nuovo incinta." },
-  { id:12, name:'Lollo',       role:'Cuginetto',color:'#10b981', avatar:'👦🏻', msg:"Ho vinto! Non so come sono riuscito, ma forse devo ringraziare qualcuno che mi ha guidato, altrimenti non sarei mai stato in grado di scoprire che anche io avrò presto un nuovo cuginetto con cui giocare!!" },
-  { id:13, name:'Zio Simone',  role:'Zio',      color:'#0ea5e9', avatar:'🧑🏻‍💻', msg:"I Win! Bello dai, si possono migliorare alcune cosette ma di base mi piace. E poi alla fine c'è anche l'easter egg: Alessia e Marco stanno per diventare genitori per la seconda volta!" },
-  { id:14, name:'Zia Angela',  role:'Zia',      color:'#d946ef', avatar:'👩🏻‍💼', msg:"Ho Vinto! Va beh dai, la prossima volta gioco come Noah così leggo la sua frase personalizzata per scoprire che Alessia è incinta di nuovo!" },
-  { id:16, name:'Noah',        role:'Cuginetto',color:'#84cc16', avatar:'🧒🏻', msg:"I Win!!! Sono troppo forte... eeeeeem mamma, quando andiamo a Cetraro a Natale voglio sentire il mio nuovo cuginetto nella pancia di zia Iaia!" },
-  { id:15, name:'Personalizzato', role:'Tu',     color:'#ffd84d', avatar:'🧑🏼‍🚀', msg:"Ho vinto, un giochino molto semplice ma simpatico....chi sa perché ha voluto che ci giocassi? Aspetta un attimo, non mi dire che..........", custom:true }
+  { id:2, name:'Marco',      role:'Papà', color:'#4dabff', avatar:'🏋🏻‍♂️', msg:"Ho vinto! Speriamo che il nuovo bimbo che sta per dare alla luce mia moglie non pianga molto! Ma sì, comunque sia, questa volta so a cosa vado incontro! forse..." },
+  { id:1, name:'Alessia',    role:'Mamma', color:'#ff6b9d', avatar:'👩🏻‍🎨', msg:"Ho vinto! Una nuova stella sta per nascere e non vedo l'ora di stringerla tra le mie braccia. Papà, tuo fratello Alessandro ed io non stiamo più nella pelle!" },
+  { id:3, name:'Alessandro', role:'Fratellone', color:'#f97316', avatar:'👦🏻', msg:"Siiiii finalmente potrò giocare con il mio nuovo FRATELLINO; però ora devo scoprire come si chiama!" }
 ];
+
+/* Modalità segreta finale: nel tema finale l'unico personaggio giocabile e' il Player Misterioso,
+   che durante la partita raccoglie le 5 lettere del nome segreto KEVIN (ordine V, I, N, E, K). */
+const MYSTERY_CHAR = { id:99, name:'Player Misterioso', role:'???', color:'#ffd84d', avatar:'❓' };
+const KEVIN_LETTERS = ['V','I','N','E','K'];
 
 /* ============ STATO GLOBALE ============ */
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window && window.innerWidth < 1024);
@@ -838,7 +997,8 @@ const state = {
     asteroidsCount: 6,
     asteroidsSize: isMobile ? 1.0 : 2.5,
     asteroidsSpeed: isMobile ? 1.0 : 3.0,
-    forceBio: false
+    forceBio: false,
+    letterEvery: 35
   },
   selectedChar: null,
   bio: false,
@@ -958,7 +1118,30 @@ function playSfx(type){
 
 /* BGM synthwave energico: basso ritmico + arpeggio vivace + drum synth */
 let bgmNodes = null;
-function startBgm(){
+/* Musica a tema (solo tema finale): tre MP3 nella cartella del gioco.
+   Menu = tutti gli schermi, Partita = durante il gioco, Fine = schermate di rivelazione.
+   Nella tema classico resta la musica sintetizzata. File mancanti: nessun fallback rumoroso. */
+const MUSIC_MENU = 'Menu - The Attack on the House.mp3';
+const MUSIC_GAME = 'Durante la partita - Man of the House.mp3';
+const MUSIC_END  = 'Fine Partita - Holiday Flight.mp3';
+let musicAudio = null;
+
+function playTrack(src, fallback){
+  if(!state.settings.bgm) return;
+  if(musicAudio && musicAudio.dataset.src === src) return; // già in riproduzione: continua
+  stopBgm();
+  const a = new Audio(src);
+  a.dataset.src = src;
+  a.loop = true;
+  a.volume = 0.45;
+  musicAudio = a;
+  const retry = ()=>{ if(musicAudio === a){ musicAudio = null; if(fallback) fallback(); } };
+  a.onerror = retry;
+  const p = a.play();
+  if(p && p.catch) p.catch(retry);
+}
+
+function startSynthBgm(){
   if(!state.settings.bgm) return;
   const ctx = ensureAudio(); if(!ctx) return;
   stopBgm();
@@ -1089,6 +1272,7 @@ function startBgm(){
   bgmNodes = { bass, arp, pad, kickGain, hatGain, master, interval };
 }
 function stopBgm(){
+  if(musicAudio){ try { musicAudio.pause(); } catch(e){} musicAudio = null; }
   if(!bgmNodes) return;
   try { clearInterval(bgmNodes.interval); } catch(e){}
   [bgmNodes.bass, bgmNodes.arp, bgmNodes.pad].forEach(o=>{ try { o.stop(); } catch(e){} });
@@ -1217,9 +1401,12 @@ function showScreen(id){
   document.body.dataset.screen = id;
   if(id === 'leaderboardScreen') renderLeaderboard();
   if(id === 'achievementsScreen') renderAchievements();
-  if(id === 'titleScreen') updateCreditsBtn();
   if(id !== 'gameScreen' && state.running){
     stopGame();
+  }
+  // tema finale: musica dedicata ai menu e alle schermate di fine partita
+  if(state.bio && state.settings.bgm && id !== 'gameScreen'){
+    playTrack((id === 'endScreen' || id === 'kevinScreen') ? MUSIC_END : MUSIC_MENU);
   }
   playSfx('click');
 }
@@ -1245,7 +1432,11 @@ function toggleOption(key, el){
   el.classList.toggle('on', state.settings[key]);
   saveSettings();
   if(key==='bgm'){
-    if(state.settings.bgm){ if(state.running) startBgm(); } else stopBgm();
+    if(state.settings.bgm){
+      if(state.running && state.bio) playTrack(MUSIC_GAME);
+      else if(state.running) startSynthBgm();
+      else if(state.bio) playTrack(MUSIC_MENU);
+    } else stopBgm();
   }
   playSfx('click');
 }
@@ -1260,15 +1451,28 @@ function setDifficulty(d){
 function renderCharacters(){
   const grid = document.getElementById('charGrid');
   grid.innerHTML = '';
-  CHARACTERS.forEach(c=>{
+  // nel tema finale l'unico personaggio giocabile e' il Player Misterioso, al centro e in grande
+  const list = state.bio ? [MYSTERY_CHAR] : CHARACTERS;
+  grid.classList.toggle('solo', !!state.bio);
+  const sub = document.getElementById('charSubtitle');
+  if(sub) sub.style.display = state.bio ? 'block' : 'none';
+  list.forEach((c,i)=>{
+    // ordine obbligatorio: Marco sempre, Alessia dopo Marco, Alessandro dopo Alessia
+    const locked = !state.bio && i > 0 && !state.achievements[CHARACTERS[i-1].id];
     const card = document.createElement('div');
-    card.className = c.custom ? 'char-card custom-char' : 'char-card';
+    card.className = (state.bio ? 'char-card mystery-solo' : (c.custom ? 'char-card custom-char' : 'char-card'))
+                   + (locked ? ' char-locked' : '');
     card.style.setProperty('--char-color', c.color);
     card.innerHTML = `
-      <div class="char-avatar" style="background:${c.color}; box-shadow:0 0 20px ${c.color}; font-size:2.5rem;">${c.avatar}</div>
-      <div class="char-name">${c.name.replace(' ', '<br>')}</div>
+      <div class="char-avatar" style="background:${c.color}; box-shadow:0 0 20px ${c.color}; font-size:2.5rem;">${locked ? '🔒' : c.avatar}</div>
+      <div class="char-name">${locked ? '🔒 ' + c.name : c.name.replace(' ', '<br>')}</div>
     `;
     card.onclick = ()=>{
+      if(locked){
+        showToast('🔒 Vinci prima una partita con ' + CHARACTERS[i-1].name + '!');
+        playSfx('asteroid');
+        return;
+      }
       document.querySelectorAll('.char-card').forEach(x=>x.classList.remove('selected'));
       card.classList.add('selected');
       if(c.custom){
@@ -1364,11 +1568,20 @@ function startGame(){
   showScreen('gameScreen');
   resizeGameCanvas();
 
-  // NPC difficulty
+  // Modalità segreta (tema finale): si vince raccogliendo le lettere di KEVIN, non con il timer
+  state.kevin = !!state.bio;
+  state.mysteryItem = null;
+  state.letters = [];
+  state.bonus = state.devSettings.letterEvery; // punti necessari per ogni item misterioso (slider menu sviluppatore)
+  document.getElementById('timerHudItem').style.display = state.kevin ? 'none' : '';
+  document.getElementById('letterHud').style.display = state.kevin ? '' : 'none';
+  if(state.kevin) updateLetterHud();
+
+  // NPC difficulty (abbassata per arrivare piu' facilmente al tema finale)
   const diffMap = {
-    easy:   { speed:3.0, greedy:0.5, predict:0.3 },
-    normal: { speed:4.0, greedy:0.75, predict:0.6 },
-    hard:   { speed:5.2, greedy:0.95, predict:0.9 }
+    easy:   { speed:2.4, greedy:0.5, predict:0.3 },
+    normal: { speed:3.2, greedy:0.65, predict:0.5 },
+    hard:   { speed:4.0, greedy:0.8, predict:0.75 }
   };
   const diff = diffMap[state.settings.difficulty];
 
@@ -1401,7 +1614,9 @@ function startGame(){
   document.getElementById('playerHudName').textContent = state.selectedChar.name;
   document.getElementById('playerHudAvatar').textContent = (state.bio ? '🏊' : '🧑‍🚀');
 
-  if(state.settings.bgm) startBgm();
+  // musica: tema finale = "Man of the House" in partita, tema classico = synth
+  if(state.bio){ if(state.settings.bgm) playTrack(MUSIC_GAME); }
+  else if(state.settings.bgm) startSynthBgm();
 
   state.rafId = requestAnimationFrame(gameLoop);
   state.countdown = true; // durante il conto alla rovescia i punti non vengono conteggiati
@@ -1424,9 +1639,9 @@ function startGame(){
         clearInterval(state.cdInterval);
         overlay.style.display = 'none';
         state.countdown = false; // finito il conto alla rovescia, i punti ora vengono conteggiati
-        // Avvia il timer del round solo dopo il conto alla rovescia
+        // Avvia il timer del round solo dopo il conto alla rovescia (mai nella modalità KEVIN)
         if(state.gameTimer) clearInterval(state.gameTimer);
-        state.gameTimer = setInterval(()=>{
+        if(!state.kevin) state.gameTimer = setInterval(()=>{
           if(state.paused || !state.running) return;
           state.timeLeft--;
           document.getElementById('timerValue').textContent = state.timeLeft;
@@ -1605,6 +1820,7 @@ function update(dt){
       if(!state.countdown){
         state.playerScore += s.points;
         document.getElementById('playerScore').textContent = state.playerScore;
+        if(state.kevin) checkBonusSpawn();
       }
       playSfx('star');
       spawnParticles(s.x, s.y, state.bio ? '#9be564' : '#FFD700', 12);
@@ -1665,6 +1881,30 @@ function update(dt){
       n.x += Math.cos(kbN)*15;
       n.y += Math.sin(kbN)*15;
       a.x = Math.random()*gameW; a.y = -a.r;
+    }
+  }
+
+  // ITEM MISTERIOSO (modalità KEVIN): solo il giocatore lo puo' raccogliere
+  const mi = state.mysteryItem;
+  if(mi){
+    const dItem = Math.hypot(mi.x - p.x, mi.y - p.y);
+    if(dItem < mi.r + p.radius + 2){
+      state.mysteryItem = null;
+      const letter = KEVIN_LETTERS[state.letters.length];
+      state.letters.push(letter);
+      // niente rivelazioni in gioco (nemmeno da mobile): soltanto feedback generico
+      updateLetterHud(state.letters.length - 1);
+      flashLetter('✉');
+      spawnParticles(mi.x, mi.y, '#9be564', 24);
+      playSfx('star');
+      showToast('✉ Item misterioso raccolto!');
+      // dev: con un solo item si ottengono subito tutte le lettere
+      if(state.letters.length < KEVIN_LETTERS.length && state.devSettings.allLetters){
+        while(state.letters.length < KEVIN_LETTERS.length) state.letters.push(KEVIN_LETTERS[state.letters.length]);
+        updateLetterHud(state.letters.length - 1);
+        showToast('✉ Modalità dev: tutte le lettere raccolte!');
+      }
+      if(state.letters.length >= KEVIN_LETTERS.length) setTimeout(endKevinGame, 600);
     }
   }
 
@@ -1792,6 +2032,9 @@ function render(){
   }
   gctx.globalAlpha = 1;
   gctx.shadowBlur = 0;
+
+  // ITEM MISTERIOSO (modalità KEVIN)
+  if(state.bio && state.mysteryItem) drawMysteryItem(state.mysteryItem);
 
   // ROCKETS
   drawRocket(state.player);
@@ -2077,16 +2320,19 @@ function applyTheme(){
   state.bio = bioOn();
   const bio = state.bio;
   if(document.body) document.body.classList.toggle('bio', bio);
-  document.title = bio ? 'Alla conquista della cellula uovo' : 'In missione con Alessandro';
+  document.title = bio ? 'Scopri il mio nome' : 'In missione con Alessandro';
   const t = document.getElementById('gameTitle');
   if(t){
-    t.innerHTML = bio ? 'ALLA CONQUISTA<br>DELLA CELLULA UOVO' : 'IN MISSIONE<br>X ALESSANDRO';
-    t.classList.toggle('long', bio);
+    // nel tema finale l'intestazione diventa la sfida del nome
+    t.innerHTML = bio ? 'SCOPRI<br>IL MIO NOME' : 'IN MISSIONE<br>X ALESSANDRO';
+    t.classList.remove('long');
   }
   const nb = document.getElementById('newGameBtn');
   if(nb) nb.textContent = bio ? '🧬 Nuova Avventura' : '🚀 Nuova Avventura';
   const sb = document.getElementById('startGameBtn');
   if(sb) sb.textContent = bio ? 'INIZIA LA SFIDA! 🧬' : 'INIZIA LA SFIDA! 🚀';
+  // la griglia personaggi cambia (Player Misterioso) quando si sblocca il tema finale
+  renderCharacters();
 }
 
 function drawBioBackground(){
@@ -2245,23 +2491,248 @@ function drawSperm(r){
   gctx.restore();
 }
 
-/* ============ CREDITS ============ */
-function openCredits(){
-  if(!state.hasWonOnce){
-    showToast('🔒 Credits bloccato! Vinci una partita per sbloccare.');
-    return;
-  }
-  showScreen('creditsScreen');
+/* ============ MODALITÀ SEGRETA: LE LETTERE DI KEVIN ============ */
+function spawnMysteryItem(){
+  state.mysteryItem = {
+    x: 40 + Math.random()*(gameW-80),
+    y: 40 + Math.random()*(gameH-80),
+    r: 16
+  };
 }
-function updateCreditsBtn(){
-  const btn = document.getElementById('creditsBtn');
-  if(state.hasWonOnce){
-    btn.classList.remove('locked');
-    btn.innerHTML = '⭐ Credits';
-  } else {
-    btn.classList.add('locked');
-    btn.innerHTML = '⭐ Credits 🔒';
+function checkBonusSpawn(){
+  if(state.playerScore < state.bonus) return;
+  state.bonus += state.devSettings.letterEvery;
+  // un solo item alla volta: se e' gia' in campo, il prossimo arrivera' alla soglia successiva
+  if(!state.mysteryItem) spawnMysteryItem();
+}
+function updateLetterHud(popIdx){
+  const el = document.getElementById('letterSlots');
+  let html = '';
+  KEVIN_LETTERS.forEach((L,i)=>{
+    // durante la partita le lettere non si vedono: solo '?', che pulsa quando l'item e' preso
+    const pop = i === popIdx ? ' pop' : '';
+    html += '<span class="kslot' + pop + '">?</span>';
+  });
+  el.innerHTML = html;
+}
+function flashLetter(letter){
+  const ov = document.getElementById('countdownOverlay');
+  const tx = document.getElementById('countdownText');
+  ov.style.display = 'flex';
+  tx.textContent = letter;
+  tx.style.color = '#9be564';
+  setTimeout(()=>{ ov.style.display = 'none'; tx.style.color = ''; }, 800);
+}
+function drawMysteryItem(m){
+  const t = performance.now()/1000;
+  const y = m.y + Math.sin(t*2)*4;
+  const r = m.r * (1 + Math.sin(t*2.5)*0.07);
+  // alone dorato
+  const halo = gctx.createRadialGradient(m.x, y, 0, m.x, y, r*2.4);
+  halo.addColorStop(0, 'rgba(255,216,77,0.35)');
+  halo.addColorStop(1, 'rgba(255,216,77,0)');
+  gctx.fillStyle = halo;
+  gctx.beginPath(); gctx.arc(m.x, y, r*2.4, 0, Math.PI*2); gctx.fill();
+  // cellula misteriosa con membrana ondulata
+  gctx.fillStyle = '#ffd84d';
+  gctx.strokeStyle = '#000';
+  gctx.lineWidth = 3;
+  gctx.lineJoin = 'round';
+  gctx.beginPath();
+  const N = 20;
+  for(let i = 0; i <= N; i++){
+    const a = (i / N) * Math.PI * 2;
+    const rr = r * (1 + Math.sin(a * 3 + t * 1.5) * 0.08);
+    const x = m.x + Math.cos(a) * rr, yy = y + Math.sin(a) * rr;
+    if(i === 0) gctx.moveTo(x, yy); else gctx.lineTo(x, yy);
   }
+  gctx.closePath(); gctx.fill(); gctx.stroke();
+  // nucleo con il punto interrogativo
+  gctx.fillStyle = '#4fae2c';
+  gctx.beginPath(); gctx.arc(m.x + r*0.1, y + r*0.08, r*0.42, 0, Math.PI*2); gctx.fill(); gctx.stroke();
+  gctx.font = 'bold ' + Math.round(r*0.55) + 'px monospace';
+  gctx.textAlign = 'center';
+  gctx.textBaseline = 'middle';
+  gctx.lineWidth = 3;
+  gctx.strokeStyle = '#000';
+  gctx.strokeText('?', m.x + r*0.1, y + r*0.09);
+  gctx.fillStyle = '#fff';
+  gctx.fillText('?', m.x + r*0.1, y + r*0.09);
+}
+
+function endKevinGame(){
+  if(!state.running) return;
+  stopGame();
+  document.getElementById('pauseOverlay').classList.remove('active');
+  try { localStorage.setItem('ima_kevin','1'); } catch(e){}
+  showScreen('kevinScreen');
+  startKevinSequence();
+}
+
+let kevinTap = { count: 0, last: 0, active: false };
+
+function startKevinSequence(){
+  const wrap = document.getElementById('kevinLetters');
+  const nameEl = document.getElementById('kevinName');
+  const labelEl = document.getElementById('kevinLabel');
+  const hintEl = document.getElementById('kevinHint');
+  const btns = document.getElementById('kevinButtons');
+  const flash = document.getElementById('kevinFlash');
+  const canvas = document.getElementById('kevinCanvas');
+  const ctx = canvas.getContext('2d');
+  // reset
+  wrap.innerHTML = ''; wrap.style.display = '';
+  nameEl.style.display = 'none';
+  labelEl.style.display = 'none';
+  hintEl.style.display = 'none';
+  btns.style.display = 'none';
+  document.getElementById('kevinSphere').classList.remove('on');
+  const orb = document.getElementById('kevinOrb');
+  orb.style.opacity = '0';
+  orb.style.transform = 'translate(-50%,-50%) scale(0)';
+  orb.style.filter = '';
+  flash.classList.remove('go');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  kevinTap = { count: 0, last: 0, active: false };
+
+  // 1) cinque punti interrogativi appaiono in posizioni casuali dello schermo
+  'VINEK'.split('').forEach(()=>{
+    const s = document.createElement('div');
+    s.className = 'kevin-letter';
+    s.textContent = '?';
+    s.style.left = (12 + Math.random()*66) + '%';
+    s.style.top = (20 + Math.random()*55) + '%';
+    wrap.appendChild(s);
+    requestAnimationFrame(()=> s.classList.add('shown'));
+  });
+
+  // 2) i punti interrogativi vengono svelati uno alla volta: V, I, N, E, K
+  'VINEK'.split('').forEach((L,i)=>{
+    setTimeout(()=>{
+      wrap.children[i].textContent = L;
+      playSfx('click');
+    }, 900 + i*750);
+  });
+
+  // 3) le lettere si riuniscono al centro e nasce la sfera luminosa grande
+  setTimeout(()=>{
+    document.getElementById('kevinSphere').classList.add('on');
+    const wr = wrap.getBoundingClientRect();
+    const cx = wr.left + wr.width/2, cy = wr.top + wr.height/2;
+    [...wrap.children].forEach(s=>{
+      const r = s.getBoundingClientRect();
+      const dx = cx - (r.left + r.width/2);
+      const dy = cy - (r.top + r.height/2);
+      s.style.transition = 'transform 0.9s cubic-bezier(0.6,-0.28,0.74,0.05)';
+      s.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.4)';
+    });
+  }, 4400);
+
+  // 4) attiva i tocchi: le lettere spariscono e appare la sfera gialla da toccare
+  setTimeout(()=>{
+    kevinTap.active = true;
+    hintEl.style.display = 'block';
+    [...wrap.children].forEach(s=>{
+      s.style.transition = 'opacity 0.4s';
+      s.style.opacity = '0';
+    });
+    orb.style.transition = 'opacity 0.4s ease';
+    requestAnimationFrame(()=>{
+      orb.style.opacity = '1';
+      orb.style.transform = 'translate(-50%,-50%) scale(1)';
+    });
+  }, 5400);
+}
+
+function kevinTapHandler(){
+  if(!kevinTap.active) return;
+  document.getElementById('kevinHint').style.display = 'none';
+  const now = performance.now();
+  // i tocchi devono essere rapidi: se si aspetta troppo il contatore riparte
+  kevinTap.count = (now - kevinTap.last > 1200) ? 1 : kevinTap.count + 1;
+  kevinTap.last = now;
+  const wrap = document.getElementById('kevinLetters');
+  const n = kevinTap.count;
+  const orb = document.getElementById('kevinOrb');
+  // feedback: scossa + pulsazione e bagliore crescenti
+  orb.style.transition = 'transform 0.12s ease, filter 0.12s ease';
+  orb.style.transform = 'translate(-50%,-50%) translate(' + (Math.random()-0.5)*16 + 'px,' + (Math.random()-0.5)*16 + 'px) scale(' + (1 + n*0.06) + ')';
+  orb.style.filter = 'brightness(' + (1 + n*0.14) + ')';
+  playSfx('click');
+  if(n >= 8) explodeKevin();
+}
+
+function explodeKevin(){
+  kevinTap.active = false;
+  const wrap = document.getElementById('kevinLetters');
+  const flash = document.getElementById('kevinFlash');
+  const orb = document.getElementById('kevinOrb');
+  document.getElementById('kevinHint').style.display = 'none';
+  document.getElementById('kevinSphere').classList.remove('on');
+  // nasconde la sfera gialla
+  orb.style.opacity = '0';
+  orb.style.transform = 'translate(-50%,-50%) scale(0)';
+  // esplosione + forte bagliore
+  flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+  playSfx('win');
+  wrap.style.display = 'none';
+  kevinConfetti();
+  // il nome appare solo dopo che il bagliore si e' allungato
+  setTimeout(()=>{
+    document.getElementById('kevinLabel').style.display = 'block';
+    document.getElementById('kevinName').style.display = 'block';
+  }, 1200);
+  setTimeout(()=>{ document.getElementById('kevinButtons').style.display = 'flex'; }, 2000);
+}
+
+function kevinConfetti(){
+  const canvas = document.getElementById('kevinCanvas');
+  const ctx = canvas.getContext('2d');
+  const colors = ['#ff2d95','#00f0ff','#ffd84d','#a855f7','#9be564','#ffffff'];
+  const parts = [];
+  let frame = 0;
+  // esplosione iniziale: burst grande di particelle dal centro
+  for(let i=0;i<100;i++){
+    const a = Math.random()*Math.PI*2;
+    const sp = 3 + Math.random()*10;
+    parts.push({
+      x: canvas.width/2, y: canvas.height/2,
+      vx: Math.cos(a)*sp, vy: Math.sin(a)*sp,
+      life: 1.3, color: colors[Math.floor(Math.random()*colors.length)],
+      r: 1.5 + Math.random()*3
+    });
+  }
+  function tick(){
+    if(document.body.dataset.screen !== 'kevinScreen') return;
+    frame++;
+    if(frame < 300 && frame % 22 === 0){
+      const x = Math.random()*canvas.width;
+      const y = Math.random()*canvas.height*0.4;
+      const c = colors[Math.floor(Math.random()*colors.length)];
+      for(let i=0;i<34;i++){
+        const a = (i/34)*Math.PI*2;
+        const sp = 2 + Math.random()*4;
+        parts.push({ x, y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp, life:1, color:c, r:2.5 });
+      }
+    }
+    ctx.fillStyle = 'rgba(5,5,24,0.22)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for(let i=parts.length-1;i>=0;i--){
+      const p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.life -= 0.016;
+      if(p.life <= 0){ parts.splice(i,1); continue; }
+      ctx.globalAlpha = Math.min(1, p.life);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if(frame < 300 || parts.length) requestAnimationFrame(tick);
+  }
+  tick();
 }
 
 /* ============ FIREWORKS & PREGNANCY REVEAL ============ */
@@ -2430,6 +2901,20 @@ function initDevMenu(){
   asp.value = ds.asteroidsSpeed;
   document.getElementById('devAsteroidsSpeedValue').textContent = ds.asteroidsSpeed.toFixed(1) + 'x';
   asp.oninput = ()=>{ ds.asteroidsSpeed = parseFloat(asp.value); document.getElementById('devAsteroidsSpeedValue').textContent = ds.asteroidsSpeed.toFixed(1) + 'x'; };
+
+  const le = document.getElementById('devLetterEverySlider');
+  le.value = ds.letterEvery;
+  document.getElementById('devLetterEveryValue').textContent = ds.letterEvery + ' pt';
+  le.oninput = ()=>{ ds.letterEvery = parseInt(le.value); document.getElementById('devLetterEveryValue').textContent = ds.letterEvery + ' pt'; };
+
+  document.getElementById('devAllLettersToggle').classList.toggle('on', !!ds.allLetters);
+}
+
+function toggleDevAllLetters(el){
+  state.devSettings.allLetters = !state.devSettings.allLetters;
+  el.classList.toggle('on', state.devSettings.allLetters);
+  if(state.devSettings.allLetters) showToast('🔑 Dev: 1 item = tutte le lettere');
+  playSfx('click');
 }
 
 /* ============ CUSTOM NAME MODAL ============ */
@@ -2486,7 +2971,6 @@ function init(){
   initOptions();
   renderCharacters();
   setupInput();
-  updateCreditsBtn();
 
   window.addEventListener('resize', ()=>{
     if(document.getElementById('gameScreen').classList.contains('active')){
@@ -2503,6 +2987,9 @@ function init(){
     }
     e.preventDefault();
   }, { passive:false });
+
+  // tocchi per far esplodere il nome nella schermata finale di KEVIN
+  document.getElementById('kevinScreen').addEventListener('click', kevinTapHandler);
 }
 
 window.addEventListener('load', init);
