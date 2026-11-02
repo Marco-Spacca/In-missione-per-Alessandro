@@ -1610,11 +1610,17 @@ function showIntroScreen(){
   textEl.textContent = '';
   cursor.style.display = 'inline-block';
   btns.style.display = 'none';
+  // reset min-height per nuova vignetta
+  const bubble = textEl.parentElement;
+  if(bubble) bubble.style.minHeight = '';
   showScreen('introScreen');
-  typewrite(c.intro, textEl, ()=>{
-    cursor.style.display = 'none';
-    btns.style.display = 'flex';
-  });
+  // aspetta che la vignetta sia visibile, poi pre-dimensiona e scrivi
+  setTimeout(()=>{
+    typewrite(c.intro, textEl, ()=>{
+      cursor.style.display = 'none';
+      btns.style.display = 'flex';
+    });
+  }, 400);
 }
 
 function actuallyStartGame(){
@@ -2238,15 +2244,19 @@ function endGame(){
   }
 
   // Avvia il typewriter DOPO aver mostrato la schermata (fix bug)
+  const endVignette = msgEl.parentElement;
+  if(endVignette) endVignette.style.minHeight = '';
   if(playerWon){
-    typewrite(state.selectedChar.msg, msgEl, ()=>{
-      // Per Alessandro: mostra "Hai sbloccato un nuovo mondo"
-      if(state.selectedChar.id === 3){
-        msgEl.textContent += '\\n\\n🌟 Hai sbloccato un nuovo mondo! 🌟';
-      }
-      // Mostra il pulsante CONTINUA solo dopo aver scritto tutto il messaggio
-      document.getElementById('endButtons').style.display = 'flex';
-    });
+    setTimeout(()=>{
+      typewrite(state.selectedChar.msg, msgEl, ()=>{
+        // Per Alessandro: mostra "Hai sbloccato un nuovo mondo"
+        if(state.selectedChar.id === 3){
+          msgEl.textContent += '\\n\\n🌟 Hai sbloccato un nuovo mondo! 🌟';
+        }
+        // Mostra il pulsante CONTINUA solo dopo aver scritto tutto il messaggio
+        document.getElementById('endButtons').style.display = 'flex';
+      });
+    }, 400);
   } else {
     // Sconfitta: dopo il messaggio torna direttamente al menu
     typewrite(isDraw ? ("Pareggio! Ti serve almeno " + (state.bio ? "una cellula" : "una stella") + " in più dell'NPC per scoprire il mio messaggio segreto!") : ("Hai perso! Gioca di nuovo per raccogliere più " + (state.bio ? "cellule" : "stelle") + " e scoprire il mio messaggio segreto!"), msgEl, ()=>{
