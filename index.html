@@ -738,7 +738,7 @@
         <span>⏱ Durata Partita</span>
         <span class="option-value"><span id="durationValue">40</span>s</span>
       </div>
-      <input type="range" id="durationSlider" min="20" max="60" step="5" value="40">
+      <input type="range" id="durationSlider" min="5" max="60" step="5" value="40">
     </div>
 
     <div class="option-row">
@@ -841,7 +841,7 @@
       <div class="typewriter-text" id="typewriterText"></div><span class="typewriter-cursor" id="typewriterCursor"></span>
     </div>
     <div class="end-buttons" id="endButtons" style="display:none;">
-      <button class="btn pink" id="continueBtn" onclick="showScreen('characterScreen')">CONTINUA</button>
+      <button class="btn pink" id="continueBtn" onclick="goToNextCharacter()">CONTINUA</button>
     </div>
   </div>
 </div>
@@ -1737,6 +1737,28 @@ function exitToMenu(){
   state.paused = false;
   document.getElementById('pauseOverlay').classList.remove('active');
   showScreen('titleScreen');
+}
+
+function goToNextCharacter(){
+  const current = state.selectedChar;
+  if(!current){ showScreen('titleScreen'); return; }
+  let nextChar = null;
+  if(state.bio){
+    nextChar = MYSTERY_CHAR;
+  } else {
+    const idx = CHARACTERS.findIndex(c => c.id === current.id);
+    if(idx >= 0 && idx < CHARACTERS.length - 1){
+      nextChar = CHARACTERS[idx + 1];
+    }
+  }
+  if(nextChar){
+    state.selectedChar = nextChar;
+    document.getElementById('startGameBtn').disabled = false;
+    showIntroScreen();
+  } else {
+    // Ultimo personaggio (Alessandro): vai alla schermata personaggi (Player Misterioso sbloccato)
+    showScreen('characterScreen');
+  }
 }
 
 /* ============ INPUT ============ */
