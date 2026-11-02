@@ -353,6 +353,13 @@
     border-right:12px solid transparent;
     border-bottom:12px solid #00f0ff;
   }
+  /* ============ INTRO SCREEN ============ */
+  #introScreen { gap:20px; justify-content:center; }
+  .intro-vignette { display:flex; flex-direction:column; align-items:center; gap:20px; }
+  .intro-avatar { width:120px; height:120px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4rem; border:3px solid #00f0ff; box-shadow:0 0 30px rgba(0,240,255,0.5); }
+  .intro-bubble { background:rgba(10,10,40,0.85); border:2px solid #00f0ff; border-radius:12px; padding:20px 24px; min-height:80px; max-width:90vw; position:relative; box-shadow:0 0 30px rgba(0,240,255,0.3); }
+  .intro-bubble::before { content:''; position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent; border-bottom:12px solid #00f0ff; }
+  .intro-buttons { display:none; gap:12px; }
   .typewriter-text {
     font-size:1rem; line-height:1.6; color:#e0e0ff;
     white-space:pre-wrap; word-wrap:break-word;
@@ -775,6 +782,19 @@
   </div>
 </div>
 
+<!-- ============ INTRO SCREEN ============ -->
+<div id="introScreen" class="screen">
+  <div class="intro-vignette">
+    <div class="intro-avatar" id="introAvatar"></div>
+    <div class="intro-bubble">
+      <div class="typewriter-text" id="introText"></div><span class="typewriter-cursor" id="introCursor"></span>
+    </div>
+  </div>
+  <div class="intro-buttons" id="introButtons" style="display:none;">
+    <button class="btn pink" id="introContinueBtn" onclick="actuallyStartGame()">CONTINUA ▶</button>
+  </div>
+</div>
+
 <!-- ============ GAME SCREEN ============ -->
 <div id="gameScreen" class="screen">
   <div class="hud">
@@ -821,7 +841,7 @@
       <div class="typewriter-text" id="typewriterText"></div><span class="typewriter-cursor" id="typewriterCursor"></span>
     </div>
     <div class="end-buttons" id="endButtons" style="display:none;">
-      <button class="btn pink" id="continueBtn" onclick="showFireworks()">CONTINUA</button>
+      <button class="btn pink" id="continueBtn" onclick="exitToMenu()">CONTINUA</button>
     </div>
   </div>
 </div>
@@ -978,14 +998,14 @@
    obbligatorio: Marco sempre disponibile, Alessia si sblocca vincendo con Marco,
    Alessandro vincendo con Alessia. Tutti e 3 vinti = tema finale. */
 const CHARACTERS = [
-  { id:2, name:'Marco',      role:'Papà', color:'#4dabff', avatar:'🏋🏻‍♂️', msg:"Ho vinto! Speriamo che il nuovo bimbo che sta per dare alla luce mia moglie non pianga molto! Ma sì, comunque sia, questa volta so a cosa vado incontro! forse..." },
-  { id:1, name:'Alessia',    role:'Mamma', color:'#ff6b9d', avatar:'👩🏻‍🎨', msg:"Ho vinto! Una nuova stella sta per nascere e non vedo l'ora di stringerla tra le mie braccia. Papà, tuo fratello Alessandro ed io non stiamo più nella pelle!" },
-  { id:3, name:'Alessandro', role:'Fratellone', color:'#f97316', avatar:'👦🏻', msg:"Siiiii finalmente potrò giocare con il mio nuovo FRATELLINO; però ora devo scoprire come si chiama!" }
+  { id:2, name:'Marco',      role:'Papà', color:'#4dabff', avatar:'🏋🏻‍♂️', intro:"Te la cavi bene alla guida di questi cosi, perché non dai una mano anche a me, se mi aiuti ti svelo anche io un altro segreto!", msg:"Mi aveva detto mia moglie che eri in gamba, beh allora ti posso dire che il futuro nascituro è un bel MASCHIETTO!" },
+  { id:1, name:'Alessia',    role:'Mamma', color:'#ff6b9d', avatar:'👩🏻‍🎨', intro:"Aiutami a raccogliere più stelle possibili, ma stai attento a non colpire gli asteroidi", msg:"Abbiamo vinto siii, per ringraziarti dell'aiuto allora devi sapere un segreto che custodisco: SONO IN CINTA!" },
+  { id:3, name:'Alessandro', role:'Fratellone', color:'#f97316', avatar:'👦🏻', intro:"Io sono troppo piccolo per guidare l'astronave, aiuta anche me", msg:"Evviva abbiamo vinto, ma lo sai che diventerò fratello maggiore? però non conosco ancora il nome...ma io so che potrà rivelarcelo!" }
 ];
 
 /* Modalità segreta finale: nel tema finale l'unico personaggio giocabile e' il Player Misterioso,
    che durante la partita raccoglie le 5 lettere del nome segreto KEVIN (ordine V, I, N, E, K). */
-const MYSTERY_CHAR = { id:99, name:'Player Misterioso', role:'???', color:'#ffd84d', avatar:'❓' };
+const MYSTERY_CHAR = { id:99, name:'Player Misterioso', role:'???', color:'#ffd84d', avatar:'❓', intro:"Allora mi hai scoperto eh, io sono il fratellino di Lele, per scoprire il mio nome aiutami a ricostruire le lettere che compongono il mio nome!", msg:"Hai raccolto una lettera" };
 const KEVIN_LETTERS = ['V','I','N','E','K'];
 
 /* ============ STATO GLOBALE ============ */
@@ -1574,6 +1594,30 @@ function startGame(){
   state.gameId = (state.gameId || 0) + 1;
   pointer.active = false;
   ensureAudio();
+  // Mostra schermata intro con vignetta e messaggio del personaggio
+  showIntroScreen();
+}
+
+function showIntroScreen(){
+  const c = state.selectedChar;
+  const avatar = document.getElementById('introAvatar');
+  const textEl = document.getElementById('introText');
+  const cursor = document.getElementById('introCursor');
+  const btns = document.getElementById('introButtons');
+  avatar.style.background = c.color;
+  avatar.style.boxShadow = '0 0 30px ' + c.color;
+  avatar.textContent = c.avatar;
+  textEl.textContent = '';
+  cursor.style.display = 'inline-block';
+  btns.style.display = 'none';
+  showScreen('introScreen');
+  typewrite(c.intro, textEl, ()=>{
+    cursor.style.display = 'none';
+    btns.style.display = 'flex';
+  });
+}
+
+function actuallyStartGame(){
   showScreen('gameScreen');
   resizeGameCanvas();
 
@@ -1906,7 +1950,7 @@ function update(dt){
       flashLetter('✉');
       spawnParticles(mi.x, mi.y, '#9be564', 24);
       playSfx('star');
-      showToast('✉ Item misterioso raccolto!');
+      showToast('Hai raccolto una lettera');
       // dev: con un solo item si ottengono subito tutte le lettere
       if(state.letters.length < KEVIN_LETTERS.length && state.devSettings.allLetters){
         while(state.letters.length < KEVIN_LETTERS.length) state.letters.push(KEVIN_LETTERS[state.letters.length]);
@@ -2196,6 +2240,10 @@ function endGame(){
   // Avvia il typewriter DOPO aver mostrato la schermata (fix bug)
   if(playerWon){
     typewrite(state.selectedChar.msg, msgEl, ()=>{
+      // Per Alessandro: mostra "Hai sbloccato un nuovo mondo"
+      if(state.selectedChar.id === 3){
+        msgEl.textContent += '\\n\\n🌟 Hai sbloccato un nuovo mondo! 🌟';
+      }
       // Mostra il pulsante CONTINUA solo dopo aver scritto tutto il messaggio
       document.getElementById('endButtons').style.display = 'flex';
     });
@@ -2542,31 +2590,35 @@ function drawMysteryItem(m){
   halo.addColorStop(1, 'rgba(255,216,77,0)');
   gctx.fillStyle = halo;
   gctx.beginPath(); gctx.arc(m.x, y, r*2.4, 0, Math.PI*2); gctx.fill();
-  // cellula misteriosa con membrana ondulata
-  gctx.fillStyle = '#ffd84d';
+  // forziere (cassa del tesoro)
+  gctx.save();
+  gctx.translate(m.x, y);
+  // corpo della cassa
+  gctx.fillStyle = '#8B4513';
   gctx.strokeStyle = '#000';
-  gctx.lineWidth = 3;
-  gctx.lineJoin = 'round';
+  gctx.lineWidth = 2;
+  gctx.fillRect(-r*1.1, -r*0.6, r*2.2, r*1.2);
+  gctx.strokeRect(-r*1.1, -r*0.6, r*2.2, r*1.2);
+  // coperchio
+  gctx.fillStyle = '#A0522D';
   gctx.beginPath();
-  const N = 20;
-  for(let i = 0; i <= N; i++){
-    const a = (i / N) * Math.PI * 2;
-    const rr = r * (1 + Math.sin(a * 3 + t * 1.5) * 0.08);
-    const x = m.x + Math.cos(a) * rr, yy = y + Math.sin(a) * rr;
-    if(i === 0) gctx.moveTo(x, yy); else gctx.lineTo(x, yy);
-  }
-  gctx.closePath(); gctx.fill(); gctx.stroke();
-  // nucleo con il punto interrogativo
-  gctx.fillStyle = '#4fae2c';
-  gctx.beginPath(); gctx.arc(m.x + r*0.1, y + r*0.08, r*0.42, 0, Math.PI*2); gctx.fill(); gctx.stroke();
-  gctx.font = 'bold ' + Math.round(r*0.55) + 'px monospace';
-  gctx.textAlign = 'center';
-  gctx.textBaseline = 'middle';
-  gctx.lineWidth = 3;
-  gctx.strokeStyle = '#000';
-  gctx.strokeText('?', m.x + r*0.1, y + r*0.09);
-  gctx.fillStyle = '#fff';
-  gctx.fillText('?', m.x + r*0.1, y + r*0.09);
+  gctx.moveTo(-r*1.1, -r*0.6);
+  gctx.lineTo(0, -r*1.1);
+  gctx.lineTo(r*1.1, -r*0.6);
+  gctx.closePath();
+  gctx.fill();
+  gctx.stroke();
+  // banda metallica orizzontale
+  gctx.fillStyle = '#FFD700';
+  gctx.fillRect(-r*1.1, -r*0.15, r*2.2, r*0.3);
+  gctx.strokeRect(-r*1.1, -r*0.15, r*2.2, r*0.3);
+  // serratura
+  gctx.fillStyle = '#FFD700';
+  gctx.beginPath();
+  gctx.arc(0, -r*0.05, r*0.2, 0, Math.PI*2);
+  gctx.fill();
+  gctx.stroke();
+  gctx.restore();
 }
 
 function endKevinGame(){
@@ -2771,119 +2823,6 @@ function kevinConfetti(){
     if(frame < 300 || parts.length) requestAnimationFrame(tick);
   }
   tick();
-}
-
-/* ============ FIREWORKS & PREGNANCY REVEAL ============ */
-function showFireworks(){
-  playSfx('win');
-  const endScreen = document.getElementById('endScreen');
-  endScreen.innerHTML = `
-    <div id="fireworksContainer" style="position:absolute; inset:0; z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(5,5,24,0.95);">
-      <canvas id="fireworksCanvas" style="position:absolute; inset:0; width:100%; height:100%;"></canvas>
-      <div id="pregnancyReveal" style="opacity:0; transition:opacity 1.5s; z-index:10; text-align:center;">
-        <div id="revealText" style="font-family:'Segoe UI','Arial Black',sans-serif; font-size:clamp(1.8rem, 5vw, 3.5rem); font-weight:900; letter-spacing:2px;">
-          <span id="revealLine1" style="color:#ff2d95; animation:textGlow1 1.5s ease-in-out infinite;">ALESSANDRO DIVENTA</span>
-          <br>
-          <span id="revealLine2" style="color:#00f0ff; animation:textGlow2 1.5s ease-in-out infinite;">FRATELLO MAGGIORE</span>
-        </div>
-        <div style="margin-top:20px; font-size:1.2rem; color:#e0e0ff;">
-          🎊 Congratulazioni! 🎊
-        </div>
-      </div>
-    </div>
-  `;
-  startFireworks();
-}
-
-function startFireworks(){
-  const canvas = document.getElementById('fireworksCanvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const particles = [];
-  const colors = ['#ff2d95','#00f0ff','#ffd84d','#a855f7','#ff6b9d','#4dabff','#10b981'];
-  let frame = 0;
-  function spawnFirework(){
-    const x = 100 + Math.random()*(canvas.width-200);
-    const y = 100 + Math.random()*(canvas.height-200);
-    const color = colors[Math.floor(Math.random()*colors.length)];
-    for(let i=0;i<40;i++){
-      const angle = (i/40)*Math.PI*2;
-      const speed = 2 + Math.random()*3;
-      particles.push({ x, y, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed, life:1, color });
-    }
-  }
-  function anim(){
-    ctx.fillStyle = 'rgba(5,5,24,0.15)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    frame++;
-    if(frame % 30 === 0) spawnFirework();
-    for(let i=particles.length-1;i>=0;i--){
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.05;
-      p.life -= 0.015;
-      if(p.life <= 0){ particles.splice(i,1); continue; }
-      ctx.globalAlpha = p.life;
-      ctx.fillStyle = p.color;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-    if(frame < 240){ // ~4 secondi di fuochi
-      requestAnimationFrame(anim);
-    } else {
-      // Fine fuochi: mostra la scritta
-      document.getElementById('pregnancyReveal').style.opacity = '1';
-      playSfx('win');
-      setTimeout(()=>{
-        document.getElementById('pregnancyReveal').innerHTML += `
-          <div style="margin-top:40px;">
-            <button class="btn" onclick="location.reload()">🏠 Torna al Menu</button>
-          </div>
-        `;
-      }, 2500);
-    }
-  }
-  anim();
-
-  // Click ovunque per creare un nuovo fuoco d'artificio dove si clicca
-  canvas.parentElement.addEventListener('click', function(e){
-    const rect = canvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
-    const color = colors[Math.floor(Math.random()*colors.length)];
-    for(let i=0;i<40;i++){
-      const angle = (i/40)*Math.PI*2;
-      const speed = 2 + Math.random()*3;
-      particles.push({ x:clickX, y:clickY, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed, life:1, color });
-    }
-    // Se i fuochi automatici sono terminati, continua a disegnare le particelle
-    if(frame >= 240 && particles.length > 0){
-      const keepDrawing = ()=>{
-        ctx.fillStyle = 'rgba(5,5,24,0.15)';
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        for(let i=particles.length-1;i>=0;i--){
-          const p = particles[i];
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += 0.05;
-          p.life -= 0.015;
-          if(p.life <= 0){ particles.splice(i,1); continue; }
-          ctx.globalAlpha = p.life;
-          ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2);
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        if(particles.length > 0) requestAnimationFrame(keepDrawing);
-      };
-      keepDrawing();
-    }
-  });
 }
 
 /* ============ TOAST ============ */
