@@ -995,11 +995,11 @@
 /* ============ COSTANTI & PERSONAGGI ============ */
 /* Il roster completo di 15 player (famiglia + Personalizzato) è in "personaggi.json":
    leggere solo su richiesta, non è caricato dal gioco. Gioco progressivo con ordine
-   obbligatorio: Marco sempre disponibile, Alessia si sblocca vincendo con Marco,
+   obbligatorio: Alessia sempre disponibile, Marco si sblocca vincendo con Alessia,
    Alessandro vincendo con Alessia. Tutti e 3 vinti = tema finale. */
 const CHARACTERS = [
-  { id:2, name:'Marco',      role:'Papà', color:'#4dabff', avatar:'🏋🏻‍♂️', intro:"Te la cavi bene alla guida di questi cosi, perché non dai una mano anche a me, se mi aiuti ti svelo anche io un altro segreto!", msg:"Mi aveva detto mia moglie che eri in gamba, beh allora ti posso dire che il futuro nascituro è un bel MASCHIETTO!" },
   { id:1, name:'Alessia',    role:'Mamma', color:'#ff6b9d', avatar:'👩🏻‍🎨', intro:"Aiutami a raccogliere più stelle possibili, ma stai attento a non colpire gli asteroidi", msg:"Abbiamo vinto siii, per ringraziarti dell'aiuto allora devi sapere un segreto che custodisco: SONO IN CINTA!" },
+  { id:2, name:'Marco',      role:'Papà', color:'#4dabff', avatar:'🏋🏻‍♂️', intro:"Te la cavi bene alla guida di questi cosi, perché non dai una mano anche a me, se mi aiuti ti svelo anche io un altro segreto!", msg:"Mi aveva detto mia moglie che eri in gamba, beh allora ti posso dire che il futuro nascituro è un bel MASCHIETTO!" },
   { id:3, name:'Alessandro', role:'Fratellone', color:'#f97316', avatar:'👦🏻', intro:"Io sono troppo piccolo per guidare l'astronave, aiuta anche me", msg:"Evviva abbiamo vinto, ma lo sai che diventerò fratello maggiore? però non conosco ancora il nome...ma io so che potrà rivelarcelo!" }
 ];
 
@@ -1486,7 +1486,7 @@ function renderCharacters(){
   const sub = document.getElementById('charSubtitle');
   if(sub) sub.style.display = state.bio ? 'block' : 'none';
   list.forEach((c,i)=>{
-    // ordine obbligatorio: Marco sempre, Alessia dopo Marco, Alessandro dopo Alessia
+    // ordine obbligatorio: Alessia sempre, Marco dopo Alessia, Alessandro dopo Marco
     const locked = !state.bio && i > 0 && !state.achievements[CHARACTERS[i-1].id];
     const card = document.createElement('div');
     card.className = (state.bio ? 'char-card mystery-solo' : (c.custom ? 'char-card custom-char' : 'char-card'))
