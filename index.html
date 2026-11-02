@@ -359,7 +359,10 @@
   .intro-avatar { width:120px; height:120px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4rem; border:3px solid #00f0ff; box-shadow:0 0 30px rgba(0,240,255,0.5); }
   .intro-bubble { background:rgba(10,10,40,0.85); border:2px solid #00f0ff; border-radius:12px; padding:20px 24px; min-height:80px; max-width:90vw; position:relative; box-shadow:0 0 30px rgba(0,240,255,0.3); }
   .intro-bubble::before { content:''; position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:12px solid transparent; border-right:12px solid transparent; border-bottom:12px solid #00f0ff; }
-  .intro-buttons { display:none; gap:12px; }
+  .unlock-vignette { display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center; }
+  .unlock-title { font-size:clamp(1.5rem, 4vw, 2.5rem); font-weight:900; color:#ffd84d; text-shadow:0 0 20px #ffd84d; animation:textGlow1 1.5s ease-in-out infinite; }
+  .unlock-world { font-size:clamp(1.2rem, 3vw, 1.8rem); color:#00f0ff; text-shadow:0 0 15px #00f0ff; margin-top:10px; }
+  .unlock-buttons { display:flex; gap:12px; margin-top:20px; }
   .typewriter-text {
     font-size:1rem; line-height:1.6; color:#e0e0ff;
     white-space:pre-wrap; word-wrap:break-word;
@@ -843,6 +846,17 @@
     <div class="end-buttons" id="endButtons" style="display:none;">
       <button class="btn pink" id="continueBtn" onclick="goToNextCharacter()">CONTINUA</button>
     </div>
+  </div>
+</div>
+
+<!-- ============ UNLOCK SCREEN ============ -->
+<div id="unlockScreen" class="screen">
+  <div class="unlock-vignette">
+    <div class="unlock-title">🌟 Hai sbloccato un nuovo mondo! 🌟</div>
+    <div class="unlock-world">All'interno della cellula uovo</div>
+  </div>
+  <div class="unlock-buttons" style="display:flex; gap:12px; margin-top:20px;">
+    <button class="btn pink" onclick="showScreen('characterScreen')">CONTINUA ▶</button>
   </div>
 </div>
 
@@ -1742,6 +1756,11 @@ function exitToMenu(){
 function goToNextCharacter(){
   const current = state.selectedChar;
   if(!current){ showScreen('titleScreen'); return; }
+  // Se abbiamo appena vinto con Alessandro, mostra lo sblocco del nuovo mondo
+  if(current.id === 3){
+    showScreen('unlockScreen');
+    return;
+  }
   let nextChar = null;
   if(state.bio){
     nextChar = MYSTERY_CHAR;
@@ -2272,10 +2291,6 @@ function endGame(){
   if(playerWon){
     setTimeout(()=>{
       typewrite(state.selectedChar.msg, msgEl, ()=>{
-        // Per Alessandro: mostra "Hai sbloccato un nuovo mondo"
-        if(state.selectedChar.id === 3){
-          msgEl.textContent += '\\n\\n🌟 Hai sbloccato un nuovo mondo! 🌟';
-        }
         // Mostra il pulsante CONTINUA solo dopo aver scritto tutto il messaggio
         document.getElementById('endButtons').style.display = 'flex';
       });
