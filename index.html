@@ -856,7 +856,7 @@
     <div class="unlock-world">All'interno della cellula uovo</div>
   </div>
   <div class="unlock-buttons" style="display:flex; gap:12px; margin-top:20px;">
-    <button class="btn pink" onclick="showScreen('characterScreen')">CONTINUA ▶</button>
+    <button class="btn pink" onclick="goToBebe()">CONTINUA ▶</button>
   </div>
 </div>
 
@@ -1019,7 +1019,7 @@ const CHARACTERS = [
 
 /* Modalità segreta finale: nel tema finale l'unico personaggio giocabile e' il Player Misterioso,
    che durante la partita raccoglie le 5 lettere del nome segreto KEVIN (ordine V, I, N, E, K). */
-const MYSTERY_CHAR = { id:99, name:'Player Misterioso', role:'???', color:'#ffd84d', avatar:'❓', intro:"Allora mi hai scoperto eh, io sono il fratellino di Lele, per scoprire il mio nome aiutami a raccogliere le lettere che compongono il mio nome!", msg:"Hai raccolto una lettera" };
+const MYSTERY_CHAR = { id:99, name:'Bebè', role:'???', color:'#ffd84d', avatar:'🏊', intro:"Allora mi hai scoperto eh, io sono il fratellino di Lele, per scoprire il mio nome aiutami a raccogliere le lettere che compongono il mio nome!", msg:"Hai raccolto una lettera" };
 const KEVIN_LETTERS = ['V','I','N','E','K'];
 
 /* ============ STATO GLOBALE ============ */
@@ -1778,6 +1778,12 @@ function goToNextCharacter(){
     // Ultimo personaggio (Alessandro): vai alla schermata personaggi (Player Misterioso sbloccato)
     showScreen('characterScreen');
   }
+}
+
+function goToBebe(){
+  state.selectedChar = MYSTERY_CHAR;
+  document.getElementById('startGameBtn').disabled = false;
+  showIntroScreen();
 }
 
 /* ============ INPUT ============ */
