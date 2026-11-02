@@ -841,7 +841,7 @@
       <div class="typewriter-text" id="typewriterText"></div><span class="typewriter-cursor" id="typewriterCursor"></span>
     </div>
     <div class="end-buttons" id="endButtons" style="display:none;">
-      <button class="btn pink" id="continueBtn" onclick="exitToMenu()">CONTINUA</button>
+      <button class="btn pink" id="continueBtn" onclick="showScreen('characterScreen')">CONTINUA</button>
     </div>
   </div>
 </div>
@@ -1430,6 +1430,7 @@ function showScreen(id){
   document.body.dataset.screen = id;
   if(id === 'leaderboardScreen') renderLeaderboard();
   if(id === 'achievementsScreen') renderAchievements();
+  if(id === 'characterScreen') renderCharacters();
   if(id !== 'gameScreen' && state.running){
     stopGame();
   }
