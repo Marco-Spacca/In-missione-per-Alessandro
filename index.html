@@ -950,8 +950,8 @@
     </div>
     <div class="option-row">
       <div class="option-label">
-        <span>🧬 Anteprima tema finale</span>
-        <div class="toggle" id="devBioToggle" onclick="toggleDevBio(this)"></div>
+        <span>🗑️ Cancella tutti i dati salvati</span>
+        <button class="btn pink" style="margin-left:auto;" onclick="clearAllData()">Cancella</button>
       </div>
     </div>
   </div>
@@ -2257,10 +2257,21 @@ function endGame(){
 
 function typewrite(text, el, onComplete){
   if(state.typewriterTimer) clearInterval(state.typewriterTimer);
+  // Pre-dimensiona la vignetta: renderizza il testo completo (invisibile) per fissare le dimensioni finali
+  const parent = el.parentElement;
+  el.style.visibility = 'hidden';
+  el.textContent = text;
+  // forza reflow per misurare l'altezza finale
+  void el.offsetHeight;
+  if(parent) parent.style.minHeight = parent.offsetHeight + 'px';
+  el.style.visibility = '';
   el.textContent = '';
-  document.getElementById('endButtons').style.display = 'none';
+  const endBtns = document.getElementById('endButtons');
+  const introBtns = document.getElementById('introButtons');
+  if(endBtns) endBtns.style.display = 'none';
+  if(introBtns) introBtns.style.display = 'none';
   let i = 0;
-  const cursor = document.getElementById('typewriterCursor');
+  const cursor = el.id === 'introText' ? document.getElementById('introCursor') : document.getElementById('typewriterCursor');
   cursor.style.display = 'inline-block';
   state.typewriterTimer = setInterval(()=>{
     if(i >= text.length){
@@ -2583,41 +2594,50 @@ function flashLetter(letter){
 function drawMysteryItem(m){
   const t = performance.now()/1000;
   const y = m.y + Math.sin(t*2)*4;
-  const r = m.r * (1 + Math.sin(t*2.5)*0.07);
+  const r = m.r; // dimensione fissa, senza pulsazione
   // alone dorato
   const halo = gctx.createRadialGradient(m.x, y, 0, m.x, y, r*2.4);
   halo.addColorStop(0, 'rgba(255,216,77,0.35)');
   halo.addColorStop(1, 'rgba(255,216,77,0)');
   gctx.fillStyle = halo;
   gctx.beginPath(); gctx.arc(m.x, y, r*2.4, 0, Math.PI*2); gctx.fill();
-  // forziere (cassa del tesoro)
+  // forziere (cassa del tesoro) - stile pulito e uniforme
   gctx.save();
   gctx.translate(m.x, y);
-  // corpo della cassa
+  // corpo della cassa (rettangolo arrotondato)
   gctx.fillStyle = '#8B4513';
-  gctx.strokeStyle = '#000';
+  gctx.strokeStyle = '#3E2723';
   gctx.lineWidth = 2;
-  gctx.fillRect(-r*1.1, -r*0.6, r*2.2, r*1.2);
-  gctx.strokeRect(-r*1.1, -r*0.6, r*2.2, r*1.2);
-  // coperchio
+  const bw = r*2.0, bh = r*1.2;
+  gctx.beginPath();
+  gctx.roundRect(-bw/2, -bh/2, bw, bh, r*0.15);
+  gctx.fill();
+  gctx.stroke();
+  // coperchio (semicerchio sopra)
   gctx.fillStyle = '#A0522D';
   gctx.beginPath();
-  gctx.moveTo(-r*1.1, -r*0.6);
-  gctx.lineTo(0, -r*1.1);
-  gctx.lineTo(r*1.1, -r*0.6);
+  gctx.arc(0, -bh/2, bw/2, Math.PI, 0);
+  gctx.lineTo(bw/2, -bh/2);
+  gctx.lineTo(-bw/2, -bh/2);
   gctx.closePath();
   gctx.fill();
   gctx.stroke();
-  // banda metallica orizzontale
+  // banda metallica orizzontale centrale
+  gctx.fillStyle = '#C0C0C0';
+  gctx.fillRect(-bw/2, -bh*0.15, bw, bh*0.3);
+  gctx.strokeRect(-bw/2, -bh*0.15, bw, bh*0.3);
+  // serratura centrale
   gctx.fillStyle = '#FFD700';
-  gctx.fillRect(-r*1.1, -r*0.15, r*2.2, r*0.3);
-  gctx.strokeRect(-r*1.1, -r*0.15, r*2.2, r*0.3);
-  // serratura
-  gctx.fillStyle = '#FFD700';
+  gctx.strokeStyle = '#000';
+  gctx.lineWidth = 1.5;
   gctx.beginPath();
-  gctx.arc(0, -r*0.05, r*0.2, 0, Math.PI*2);
+  gctx.arc(0, -bh*0.05, r*0.18, 0, Math.PI*2);
   gctx.fill();
   gctx.stroke();
+  // lucchetto sotto la serratura
+  gctx.fillStyle = '#FFD700';
+  gctx.fillRect(-r*0.08, -bh*0.05, r*0.16, r*0.25);
+  gctx.strokeRect(-r*0.08, -bh*0.05, r*0.16, r*0.25);
   gctx.restore();
 }
 
@@ -2929,6 +2949,21 @@ function toggleDevBio(el){
   el.classList.toggle('on', state.devSettings.forceBio);
   applyTheme();
   playSfx('click');
+}
+
+function clearAllData(){
+  if(!confirm('Cancellare tutti i dati salvati? (impostazioni, achievements, progressi)')) return;
+  try {
+    localStorage.removeItem('ima_settings');
+    localStorage.removeItem('ima_achievements');
+    localStorage.removeItem('ima_history');
+    localStorage.removeItem('ima_won');
+    localStorage.removeItem('ima_kevin');
+    localStorage.removeItem('ima_devSettings');
+  } catch(e){}
+  showToast('Dati cancellati. Ricarica la pagina.');
+  playSfx('click');
+  setTimeout(()=> location.reload(), 1500);
 }
 
 function showToast(msg, ms){
